@@ -1,0 +1,1146 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Lire les sichot</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Literata:opsz,wght@7..72,500;7..72,600&family=Noto+Serif+Hebrew:wght@400;600&display=swap">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<style>
+/* Mise en page : une colonne de lecture (max 980px), en-tête collant ; le texte de l'édition, les aides et la traduction ont chacun leur zone visuelle. */
+:root{
+  --bg:#eef0f3; --surface:#ffffff; --ink:#1b2230; --muted:#596173; --line:#d6dae2;
+  --accent:#2b5d91; --accent-soft:#dfe9f4; --accent-ink:#ffffff;
+  --ed-bg:#fbfaf6; --ed-line:#cfc8b6; --ed-ink:#15171c;
+  --aid-bg:#e7f1ec; --aid-ink:#1f5444; --aid-line:#9cc4b3;
+  --tr-bg:#f1ecf7; --tr-ink:#46375f; --tr-line:#c5b6dc;
+  --key:#9a6a14; --key-bg:#f6ecd6; --ok:#2c7a4b; --warn:#a45f00; --bad:#ad2a22;
+  --he:"Noto Serif Hebrew","Frank Ruhl Libre","David","Times New Roman",serif;
+  --ui:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --display:"Literata","Georgia",serif;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10141b; --surface:#171c25; --ink:#e6e9ef; --muted:#9aa3b3; --line:#2a313d;
+  --accent:#86b5e8; --accent-soft:#1d2b3c; --accent-ink:#0d1420;
+  --ed-bg:#1b1d21; --ed-line:#45433b; --ed-ink:#f1eee6;
+  --aid-bg:#13251e; --aid-ink:#9fd7c1; --aid-line:#2f5547;
+  --tr-bg:#1f1a2a; --tr-ink:#d3c5ef; --tr-line:#4a3d64;
+  --key:#e2b45a; --key-bg:#2c2412; --ok:#6fc48f; --warn:#e3a54a; --bad:#f08a80; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10141b; --surface:#171c25; --ink:#e6e9ef; --muted:#9aa3b3; --line:#2a313d;
+  --accent:#86b5e8; --accent-soft:#1d2b3c; --accent-ink:#0d1420;
+  --ed-bg:#1b1d21; --ed-line:#45433b; --ed-ink:#f1eee6;
+  --aid-bg:#13251e; --aid-ink:#9fd7c1; --aid-line:#2f5547;
+  --tr-bg:#1f1a2a; --tr-ink:#d3c5ef; --tr-line:#4a3d64;
+  --key:#e2b45a; --key-bg:#2c2412; --ok:#6fc48f; --warn:#e3a54a; --bad:#f08a80; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--ui);font-size:15px;line-height:1.5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+a{color:var(--accent)}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:980px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+header.top .in{max-width:980px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font-family:var(--display);font-weight:600;font-size:18px;display:flex;align-items:baseline;gap:8px}
+.brand .he{font-family:var(--he);font-size:20px;color:var(--accent)}
+.sync{font-size:12px;color:var(--muted)}
+nav.tabs{display:flex;gap:4px;flex-wrap:wrap;margin-inline-start:auto}
+nav.tabs a{padding:6px 10px;border-radius:8px;text-decoration:none;color:var(--muted);font-weight:500;font-size:14px}
+nav.tabs a.on{background:var(--accent-soft);color:var(--accent)}
+.modes{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.modes button{border:0;background:transparent;padding:5px 12px;font-size:13px;color:var(--muted)}
+.modes button.on{background:var(--accent);color:var(--accent-ink)}
+h1{font-family:var(--display);font-weight:600;font-size:clamp(24px,3.4vw,32px);line-height:1.2;text-wrap:balance;margin:22px 0 6px}
+h2{font-family:var(--display);font-weight:600;font-size:21px;text-wrap:balance;margin:26px 0 8px}
+h3{font-size:15px;margin:0 0 6px;font-weight:600}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.eyebrow{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.stack{display:flex;flex-direction:column;gap:12px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 14px;font-weight:500}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent}
+.btn.sm{padding:5px 10px;font-size:13px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}
+.chip.ready{color:var(--ok);border-color:currentColor}
+.chip.prepare{color:var(--accent);border-color:currentColor}
+.chip.print{color:var(--key);border-color:currentColor}
+.chip.integrate{color:var(--warn);border-color:currentColor;border-style:dashed}
+.chip.done{background:var(--ok);color:var(--surface);border-color:var(--ok)}
+.notice{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 12px;border-radius:6px;font-size:14px}
+.warnbox{border-left:3px solid var(--warn);background:var(--key-bg);padding:10px 12px;border-radius:6px;font-size:14px}
+/* zones */
+.zone-label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.edition{background:var(--ed-bg);border:1px solid var(--ed-line);border-radius:4px;box-shadow:inset 0 0 0 4px var(--ed-bg),inset 0 0 0 5px var(--ed-line);padding:18px 18px 14px;color:var(--ed-ink)}
+.edition .zone-label{color:var(--muted)}
+.aid{background:var(--aid-bg);border:1px dashed var(--aid-line);border-radius:var(--r);padding:12px 14px;color:var(--aid-ink)}
+.aid .zone-label{color:var(--aid-ink)}
+.trans{background:var(--tr-bg);border:1px solid var(--tr-line);border-radius:var(--r);padding:12px 14px;color:var(--tr-ink)}
+.trans .zone-label{color:var(--tr-ink)}
+/* hébreu */
+.he{font-family:var(--he);direction:rtl;unicode-bidi:isolate}
+.heline{font-family:var(--he);direction:rtl;text-align:right;font-size:clamp(23px,3vw,29px);line-height:2.05;word-spacing:.08em}
+.heline.small{font-size:21px;line-height:1.9}
+.tok{display:inline-flex;flex-direction:column;align-items:center;vertical-align:top;margin:0 1px}
+.w{border:0;background:transparent;padding:0 3px;border-radius:5px;font-family:var(--he);font-size:inherit;line-height:1.5;color:inherit}
+.w:hover{background:var(--accent-soft)}
+.w.sel{background:var(--accent);color:var(--accent-ink)}
+.w.seen{text-decoration:underline dotted var(--muted);text-underline-offset:6px}
+.w.k-conn{color:var(--key)}
+.w.k-conn.sel{color:var(--accent-ink)}
+.w.voc{border-bottom:1px dashed var(--aid-line)}
+.tl{font-family:var(--ui);font-size:12px;line-height:1.1;color:var(--aid-ink);direction:ltr;min-height:13px}
+.punc{font-family:var(--he)}
+.wrow{display:inline-flex;align-items:baseline;direction:rtl}
+.chunk{display:inline}
+.groups .chunk{display:inline-block;border:1px solid var(--aid-line);background:color-mix(in srgb,var(--aid-bg) 70%,transparent);border-radius:8px;padding:2px 6px 4px;margin:4px 2px;position:relative}
+.groups .chunk .role{display:block;font-family:var(--ui);font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--aid-ink);direction:ltr;text-align:right;line-height:1.4}
+.chunk .role{display:none}
+.role-question{--rc:#b3261e}.role-objection{--rc:#a45f00}.role-reponse{--rc:#2c7a4b}
+.groups .chunk.role-question,.groups .chunk.role-objection,.groups .chunk.role-reponse,.groups .chunk.role-conclusion{border-color:var(--rc,var(--aid-line))}
+.toolbar{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.tbtn{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 11px;font-size:13px;font-weight:500;display:inline-flex;gap:6px;align-items:center}
+.tbtn.on{background:var(--aid-ink);border-color:var(--aid-ink);color:var(--surface)}
+.tbtn .n{font-size:11px;opacity:.7}
+.sent{display:flex;flex-direction:column;gap:10px;padding:14px 0;border-top:1px solid var(--line)}
+.sent:first-child{border-top:0}
+.wordcard{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:14px}
+.wordcard dt{color:var(--muted);font-size:12px;padding-top:2px}
+.wordcard dd{margin:0}
+.wordcard .big{font-family:var(--he);font-size:28px;direction:rtl}
+textarea{width:100%;min-height:84px;border:1px solid var(--line);border-radius:8px;padding:10px;background:var(--surface);resize:vertical}
+input[type=text]{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--surface);width:100%}
+.opt{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:9px 12px;margin:6px 0}
+.opt.right{border-color:var(--ok);color:var(--ok);font-weight:600}
+.opt.wrong{border-color:var(--bad);color:var(--bad)}
+.days{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.day{border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:12px;text-align:left;display:flex;flex-direction:column;gap:6px}
+.day.today{outline:2px solid var(--accent)}
+.day .num{font-family:var(--display);font-weight:600;font-size:17px}
+.blocks{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.block{display:flex;flex-direction:column;gap:8px}
+.block .t{font-weight:600}
+.meta{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:13px}
+.meta dt{color:var(--muted)}
+.meta dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.flash{font-family:var(--he);font-size:34px;direction:rtl;text-align:center;padding:14px}
+.big-letter{font-family:var(--he);font-size:72px;text-align:center;line-height:1.2}
+table.tab{border-collapse:collapse;width:100%;font-size:14px}
+table.tab td,table.tab th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left}
+.tabwrap{overflow-x:auto}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kpi .card{padding:12px}
+.kpi .v{font-family:var(--display);font-size:24px;font-weight:600;font-variant-numeric:tabular-nums}
+.timer{font-variant-numeric:tabular-nums;font-weight:600}
+.hl{background:var(--key-bg);color:var(--key);border-radius:4px;padding:0 3px}
+.fb-pt{border-left:3px solid var(--line);padding:6px 10px;margin:6px 0}
+.fb-pt.juste{border-color:var(--ok)}.fb-pt.imprecis{border-color:var(--warn)}.fb-pt.faux,.fb-pt.manque{border-color:var(--bad)}
+.canvaswrap{overflow:auto;max-height:70vh;border:1px solid var(--line);border-radius:8px}
+.canvaswrap canvas{max-width:100%;height:auto;display:block}
+.toast{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:8px 14px;border-radius:8px;font-size:14px;z-index:20}
+details>summary{cursor:pointer;font-weight:600}
+@media (max-width:640px){nav.tabs{margin-inline-start:0;width:100%;overflow-x:auto;flex-wrap:nowrap}.heline{font-size:22px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="in">
+  <div class="brand"><span class="he">שיחות</span> Lire les sichot</div>
+  <div class="modes" role="group" aria-label="Mode de lecture">
+    <button id="mode-guided" type="button">Lecture guidée</button>
+    <button id="mode-auto" type="button">Lecture autonome</button>
+  </div>
+  <span class="sync" id="sync">Chargement…</span>
+  <nav class="tabs" id="tabs">
+    <a href="#aujourdhui" data-v="aujourdhui">Aujourd'hui</a>
+    <a href="#parcours" data-v="parcours">Parcours</a>
+    <a href="#revision" data-v="revision">Révision</a>
+    <a href="#importer" data-v="importer">Importer</a>
+    <a href="#progres" data-v="progres">Progrès</a>
+    <a href="#aide" data-v="aide">Méthode</a>
+  </nav>
+</div></header>
+<main class="wrap" id="app"><p class="muted" style="padding-top:24px">Chargement du contenu…</p></main>
+
+<script>
+(() => {
+'use strict';
+/* ---------- utilitaires ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const app = $('#app');
+let C = null;            // contenu (content.json)
+let S = null;            // état sauvegardé
+let SAMPLE = null, DOWNLOADS = null, DB = null, UID = null;
+const EDGE = '",.:;?!()[]–—־';
+const todayISO = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); };
+const addDays = (iso, n) => { const d = new Date(iso + 'T12:00:00'); d.setDate(d.getDate() + n); return d.toISOString().slice(0,10); };
+const fmtDate = iso => new Date(iso + 'T12:00:00').toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'});
+const hebDate = iso => { try { return new Intl.DateTimeFormat('fr-u-ca-hebrew', {day:'numeric', month:'long'}).format(new Date(iso + 'T12:00:00')); } catch(e) { return ''; } };
+function toast(msg) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2600); }
+const ROLES = {
+  cadre:'Cadre', citation:'Citation', question:'Question', principe:'Principe', commentateur:'Réponse d\'un commentateur',
+  preuve:'Preuve', conclusion:'Conclusion', explication:'Explication', objection:'Objection', consequence:'Conséquence',
+  parenthese:'Parenthèse', reponse:'Réponse', annonce:'Annonce', detail:'Détail', exemple:'Exemple', lecon:'Leçon / vœu',
+  tentative:'Réponse provisoire', preambule:'Préambule'
+};
+const KIND = {conn:'connecteur', abbr:'abréviation', name:'nom propre', verb:'verbe', ref:'auteur / livre', aram:'araméen', num:'nombre'};
+
+/* ---------- état et sauvegarde ---------- */
+const LSKEY = 'sichot-progress-v1';
+function blankState() {
+  return { v:1, created: new Date().toISOString(), placement:null,
+    prefs:{ mode:'guided', vowels:true, translit:false, start:'2026-11-23' },
+    days:{}, reads:{}, reform:{}, srs:{}, tests:{}, errors:{}, imports:[], ann:{}, log:[] };
+}
+function lsGet() { try { const r = localStorage.getItem(LSKEY); return r ? JSON.parse(r) : null; } catch(e) { return null; } }
+function lsSet(v) { try { localStorage.setItem(LSKEY, JSON.stringify(v)); } catch(e) {} }
+let saveTimer = null, saving = false, pendingSave = false;
+function setSync(t) { $('#sync').textContent = t; }
+function save() {
+  lsSet(S);
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(flush, 1200);
+}
+async function flush() {
+  if (!DB || !UID) { setSync('Progression enregistrée sur cet appareil'); return; }
+  if (saving) { pendingSave = true; return; }
+  saving = true;
+  try {
+    const {ann, imports, ...core} = S;
+    await DB.doc('data/users/' + UID + '/progress').set({json: JSON.stringify(core), at: Date.now()});
+    for (const [k, v] of Object.entries(ann || {})) {
+      if (v && v._dirty) { const copy = {...v}; delete copy._dirty; await DB.doc('data/users/' + UID + '/ann-' + k).set({json: JSON.stringify(copy)}); v._dirty = false; }
+    }
+    for (const im of imports || []) {
+      if (im._dirty) { const copy = {...im}; delete copy._dirty; await DB.doc('data/users/' + UID + '/imp-' + im.id).set({json: JSON.stringify(copy)}); im._dirty = false; }
+    }
+    setSync('Progression synchronisée');
+  } catch(e) { setSync('Enregistrée sur cet appareil (synchro indisponible)'); }
+  saving = false;
+  if (pendingSave) { pendingSave = false; flush(); }
+}
+async function loadState() {
+  S = lsGet() || blankState();
+  if (!window.claude || !window.claude.use) { setSync('Progression enregistrée sur cet appareil'); return; }
+  try {
+    const [db, user] = await Promise.all([claude.use('db'), claude.use('user')]);
+    if (db && user) {
+      const id = await user.id();
+      if (id) {
+        DB = db; UID = id;
+        const timer = new Promise(r => setTimeout(() => r('timeout'), 10000));
+        const snap = await Promise.race([db.doc('data/users/' + id + '/progress').get(), timer]);
+        if (snap !== 'timeout' && snap.exists) {
+          const remote = JSON.parse(snap.data().json || '{}');
+          const local = lsGet();
+          if (!local || (remote.log?.length || 0) >= (local.log?.length || 0)) { S = {...blankState(), ...remote, ann:{}, imports:[]}; }
+          const col = await db.collection('data/users/' + id).get();
+          for (const d of col.docs) {
+            if (d.id.startsWith('ann-')) S.ann[d.id.slice(4)] = JSON.parse(d.data().json || '{}');
+            if (d.id.startsWith('imp-')) S.imports.push(JSON.parse(d.data().json || '{}'));
+          }
+        }
+        setSync('Progression synchronisée');
+      }
+    } else setSync('Progression enregistrée sur cet appareil');
+  } catch(e) { setSync('Progression enregistrée sur cet appareil'); }
+}
+function logEvent(type, data) { S.log.push({t: Date.now(), type, ...data}); if (S.log.length > 600) S.log = S.log.slice(-600); save(); }
+
+/* ---------- contenu ---------- */
+const P = id => C.passages.find(p => p.id === id);
+function normTok(t) { let a = t; while (a && (EDGE + "'").includes(a[0])) a = a.slice(1); while (a && EDGE.includes(a[a.length-1])) a = a.slice(0, -1); return a; }
+function toks(he) { return he.split(/\s+/).filter(Boolean).map(raw => { const n = normTok(raw); const i = n ? raw.indexOf(n) : raw.length; return {raw, n, pre: raw.slice(0, i), suf: raw.slice(i + n.length)}; }); }
+function lexFor(list, i, sid, extraLex) {
+  const n = list[i].n, nx = list[i+1] && list[i+1].n;
+  const L = Object.assign({}, C.lex, extraLex || {});
+  if (L[n + '@' + sid]) return {e: L[n + '@' + sid], key: n + '@' + sid};
+  if (nx && L[n + '>' + nx]) return {e: L[n + '>' + nx], key: n + '>' + nx};
+  if (L[n]) return {e: L[n], key: n};
+  return null;
+}
+function splitSentences(text) {
+  const out = []; let cur = '';
+  const parts = text.split(/(\s+)/);
+  for (let i = 0; i < parts.length; i++) {
+    cur += parts[i];
+    const p = parts[i];
+    if (/[.?!]["'”)\]]?$/.test(p) && !/^\.$/.test(p) && !/^[א-ת]\.$/.test(p) && !(parts[i+2] === '.')) { if (cur.trim().split(/\s+/).length > 2) { out.push(cur.trim()); cur = ''; } }
+  }
+  if (cur.trim()) out.push(cur.trim());
+  return out;
+}
+/* textes « à préparer » : sentences dérivées du texte vérifié, + annotations générées éventuelles */
+function textUnit(tid) {
+  const t = C.texts[tid] || (S.imports.find(x => x.id === tid));
+  if (!t) return null;
+  const ann = S.ann[tid];
+  const sents = splitSentences(t.text).map((he, i) => {
+    const a = ann && ann.sentences && ann.sentences[i];
+    const chunks = (a && a.chunks && a.chunks.map(c => c.he).join(' ').replace(/\s+/g,' ') === he.replace(/\s+/g,' ')) ? a.chunks : [{role:'', he, fr:''}];
+    return {id: tid + '-' + i, he, chunks, fr: a ? a.fr : '', note: a ? a.note : '', generated: !!a};
+  });
+  return {id: tid, meta: t, sentences: sents, lex: ann ? ann.words || {} : {}, generated: !!ann};
+}
+/* index des occurrences (pour « revoir ailleurs ») */
+let OCC = null;
+function buildOcc() {
+  OCC = {};
+  const add = (n, ref) => { if (!n) return; (OCC[n] = OCC[n] || []).push(ref); };
+  for (const p of C.passages) for (const s of p.sentences) toks(s.he).forEach((t, i) => add(t.n, {pid: p.id, sid: s.id, i, he: s.he}));
+  for (const tid of Object.keys(C.texts)) { const u = textUnit(tid); u.sentences.forEach(s => toks(s.he).forEach((t, i) => add(t.n, {tid, sid: s.id, i, he: s.he}))); }
+}
+function bareWord(n) { return n.replace(/^[והבלמשכד](?=[א-ת]{2,})/, ''); }
+function otherOccurrences(n, notSid, max = 3) {
+  const list = (OCC[n] || []).filter(o => o.sid !== notSid);
+  const seen = new Set(); const out = [];
+  for (const o of list) { if (seen.has(o.sid)) continue; seen.add(o.sid); out.push(o); if (out.length >= max) break; }
+  return out;
+}
+
+/* ---------- capacités Claude ---------- */
+async function initCaps() {
+  if (!window.claude || !window.claude.use) return;
+  try { SAMPLE = await claude.use('sample'); } catch(e) { SAMPLE = null; }
+  try { DOWNLOADS = await claude.use('downloads'); } catch(e) { DOWNLOADS = null; }
+}
+function sampleErr(e) {
+  const c = e && e.code;
+  if (c === 'not_granted' || c === 'sampling_disabled') return "Claude n'est pas autorisé pour cette page. Tu peux continuer sans : la réponse de référence reste disponible.";
+  if (c === 'rate_limited') return "Trop de demandes pour l'instant. Réessaie dans quelques minutes.";
+  if (c === 'invalid_json') return "La réponse de Claude n'était pas lisible. Réessaie.";
+  return "Claude n'a pas pu répondre (" + (c || 'erreur') + "). Réessaie plus tard.";
+}
+
+/* ---------- routage ---------- */
+let CTX = {};   // contexte de la vue en cours (bloc, passage...)
+let KEEP = false;
+function go(view, ctx) { CTX = ctx || {}; if (location.hash !== '#' + view) { KEEP = true; location.hash = view; } else render(); }
+window.addEventListener('hashchange', () => { if (!KEEP) CTX = {}; KEEP = false; render(); });
+function curView() { const h = location.hash.replace('#', ''); return h || 'aujourdhui'; }
+function render() {
+  const v = curView();
+  $$('#tabs a').forEach(a => a.classList.toggle('on', a.dataset.v === v));
+  $('#mode-guided').classList.toggle('on', S.prefs.mode === 'guided');
+  $('#mode-auto').classList.toggle('on', S.prefs.mode === 'auto');
+  window.scrollTo(0, 0);
+  const m = v.match(/^jour-(\d+)$/);
+  if (m) return viewDay(+m[1]);
+  ({aujourdhui: viewToday, parcours: viewPlan, revision: viewReview, importer: viewImport, progres: viewProgress, aide: viewHelp, positionnement: viewPlacement, bloc: viewBlock, lecture: viewBlock}[v] || viewToday)();
+}
+$('#mode-guided').onclick = () => { S.prefs.mode = 'guided'; save(); render(); };
+$('#mode-auto').onclick = () => { S.prefs.mode = 'auto'; save(); render(); };
+
+/* ---------- programme ---------- */
+function dayDate(n) { return addDays(S.prefs.start || C.program.start, n - 1); }
+function dayByDate() { const t = todayISO(); const start = S.prefs.start || C.program.start; const diff = Math.round((new Date(t + 'T12:00:00') - new Date(start + 'T12:00:00')) / 864e5) + 1; return Math.max(1, Math.min(28, diff)); }
+function dayDone(n) { const d = S.days[n]; const D = C.program.days[n-1]; return !!(d && D.blocks.every((b, i) => d.b && d.b[i])); }
+function currentDay() { for (let n = 1; n <= 28; n++) if (!dayDone(n)) return Math.min(n, Math.max(n, 1)); return 28; }
+const STATUS = {ready:['ready','Séance prête'], prepare:['prepare','Texte vérifié · aides à préparer'], print:['print','Fiche imprimable'], integrate:['integrate','Texte à intégrer']};
+function statusChip(st) { const s = STATUS[st] || STATUS.prepare; return `<span class="chip ${s[0]}">${s[1]}</span>`; }
+function dueCards() { const t = todayISO(); return Object.entries(S.srs).filter(([k, c]) => !c.due || c.due <= t); }
+
+/* ---------- vue : aujourd'hui ---------- */
+function viewToday() {
+  const byDate = dayByDate();
+  const n = CTX.day || Math.min(currentDay(), Math.max(byDate, 1));
+  const D = C.program.days[n - 1];
+  const iso = dayDate(n);
+  const due = dueCards().length;
+  const W = C.program.weeks[D.week - 1];
+  let h = '';
+  if (!S.placement) h += `<div class="notice" style="margin-top:18px"><b>Première fois ?</b> Commence par le test de positionnement (5 minutes) : il règle les aides (voyelles, translittération) selon ton niveau. <button class="btn primary sm" id="go-place" style="margin-inline-start:8px">Faire le test</button></div>`;
+  h += `<p class="eyebrow" style="margin-top:22px">Jour ${n} sur 28 · ${esc(fmtDate(iso))} · ${esc(hebDate(iso))} · semaine ${D.week} : ${esc(W.parasha)}</p>
+  <h1>${esc(D.title)}</h1>
+  <p class="muted">${esc(D.focus)}</p>
+  <div class="row" style="margin:6px 0 14px">${statusChip(D.status)} ${dayDone(n) ? '<span class="chip done">Journée terminée</span>' : ''}
+    <span class="small muted">2 h 30 · trois blocs de 50 minutes</span>
+    ${n > 1 ? `<button class="btn ghost sm" data-day="${n-1}">← Jour ${n-1}</button>` : ''} ${n < 28 ? `<button class="btn ghost sm" data-day="${n+1}">Jour ${n+1} →</button>` : ''}</div>`;
+  if (n === 1) h += `<div class="card" style="margin-bottom:14px"><h3>Sicha ou maamar ?</h3><p style="margin:0">${esc(C.program.sichaVsMaamar)}</p></div>`;
+  h += `<div class="blocks">` + D.blocks.map((b, i) => blockCard(n, b, i)).join('') + `</div>`;
+  if (D.source) h += sourceBox({title: D.source.label, link: D.source.link, index: D.source.index, verify: "Lien donné par Mafteiach ; le document n'a pas encore été ouvert ni vérifié."});
+  h += `<div class="grid2" style="margin-top:14px">
+    <div class="card"><h3>Révision espacée</h3><p class="muted small" style="margin:0 0 8px">${due} carte${due > 1 ? 's' : ''} à revoir aujourd'hui (mots qui t'ont bloqué et expressions-clés).</p><button class="btn" id="go-rev">Réviser</button></div>
+    <div class="card"><h3>Fiche imprimable du jour</h3><p class="muted small" style="margin:0 0 8px">Texte, mots, groupes de sens, questions ; traduction sur une page à part. Utile pour Chabbat.</p><button class="btn" id="dl-fiche">Télécharger la fiche</button></div>
+  </div>`;
+  app.innerHTML = h;
+  $('#go-place') && ($('#go-place').onclick = () => go('positionnement'));
+  $$('[data-day]').forEach(b => b.onclick = () => { CTX = {day: +b.dataset.day}; render(); });
+  $$('[data-block]').forEach(b => b.onclick = () => { const [d, i] = b.dataset.block.split(':').map(Number); go('bloc', {day: d, block: i}); });
+  $('#go-rev').onclick = () => go('revision');
+  $('#dl-fiche').onclick = () => downloadFiche(n);
+}
+function blockCard(n, b, i) {
+  const done = S.days[n] && S.days[n].b && S.days[n].b[i];
+  const labels = ['Bloc 1 · Révision active', 'Bloc 2 · Lecture guidée', 'Bloc 3 · Lecture et reformulation'];
+  const what = b.items.map(it => it.pid ? `<bdi>${esc(P(it.pid).title)}</bdi>${it.sids.length ? ' · ' + it.sids.length + ' phrase' + (it.sids.length > 1 ? 's' : '') : ' · texte complet'}` : (C.texts[it.tid] ? `<bdi>${esc(C.texts[it.tid].title)}</bdi>` : '')).join('<br>');
+  return `<div class="card block"><span class="eyebrow">${labels[i] || 'Bloc ' + (i+1)} · 50 min</span>
+    <div class="t">${esc(b.title)}</div>
+    ${what ? `<div class="small muted">${what}</div>` : ''}
+    ${b.note ? `<div class="small">${esc(b.note)}</div>` : ''}
+    <div class="row" style="margin-top:auto">${done ? '<span class="chip done">Fait</span>' : ''}<button class="btn ${done ? '' : 'primary'} sm" data-block="${n}:${i}">${done ? 'Reprendre' : 'Commencer'}</button></div></div>`;
+}
+function sourceBox(m) {
+  return `<details class="card" style="margin-top:12px"><summary>Source et vérification</summary>
+  <dl class="meta" style="margin-top:10px">
+    ${m.title ? `<dt>Texte</dt><dd>${esc(m.title)}</dd>` : ''}
+    ${m.work ? `<dt>Édition</dt><dd>${esc(m.work)}</dd>` : ''}
+    ${m.occasion ? `<dt>Occasion</dt><dd>${esc(m.occasion)}</dd>` : ''}
+    ${m.ref ? `<dt>Page / §</dt><dd>${esc(m.ref)}</dd>` : ''}
+    ${m.lang ? `<dt>Langue</dt><dd>${esc(m.lang)}</dd>` : ''}
+    ${m.verify ? `<dt>Vérification</dt><dd>${esc(m.verify)}</dd>` : ''}
+    ${m.link ? `<dt>Document</dt><dd><a href="${esc(m.link)}" target="_blank" rel="noopener">Ouvrir le PDF (Google Drive)</a></dd>` : ''}
+    ${m.index ? `<dt>Index</dt><dd><a href="${esc(m.index)}" target="_blank" rel="noopener">Fiche Mafteiach</a></dd>` : ''}
+  </dl></details>`;
+}
+
+/* ---------- vue : parcours ---------- */
+function viewPlan() {
+  const today = dayByDate();
+  let h = `<h1>Parcours de 28 jours</h1><p class="muted">Du ${esc(fmtDate(dayDate(1)))} au ${esc(fmtDate(dayDate(28)))}. Chaque semaine suit la paracha. Légende : ${statusChip('ready')} ${statusChip('prepare')} ${statusChip('print')} ${statusChip('integrate')}</p>
+  <div class="notice small">« Séance prête » : texte vérifié sur le document et entièrement annoté. « Texte vérifié · aides à préparer » : le texte hébreu est intégré depuis le PDF ; les aides mot à mot se génèrent avec Claude dans le lecteur (marquées « à vérifier »). « Texte à intégrer » : source identifiée, pas encore ouverte.</div>`;
+  for (const W of C.program.weeks) {
+    h += `<h2>Semaine ${W.n} · ${esc(W.parasha)}</h2><p class="muted small" style="margin-top:-4px">${esc(W.goal)}</p><div class="days">`;
+    for (const D of C.program.days.filter(d => d.week === W.n)) {
+      const iso = dayDate(D.n);
+      h += `<button class="day ${D.n === today ? 'today' : ''}" data-d="${D.n}"><span class="num">Jour ${D.n}</span><span class="small muted">${esc(fmtDate(iso))} · ${esc(hebDate(iso))}</span><span>${esc(D.title)}</span><span class="row">${statusChip(D.status)}${dayDone(D.n) ? '<span class="chip done">Fait</span>' : ''}</span></button>`;
+    }
+    h += `</div>`;
+  }
+  h += `<h2>Date de début</h2><div class="row"><input type="date" id="start" value="${esc(S.prefs.start)}" style="max-width:200px" class="btn"><span class="small muted">Change-la si tu commences un autre jour : les dates du parcours suivront.</span></div>`;
+  app.innerHTML = h;
+  $$('[data-d]').forEach(b => b.onclick = () => go('aujourdhui', {day: +b.dataset.d}));
+  $('#start').onchange = e => { if (e.target.value) { S.prefs.start = e.target.value; save(); render(); } };
+}
+function viewDay(n) { CTX = {day: n}; viewToday(); }
+
+/* ---------- vue : bloc ---------- */
+let blockT0 = 0;
+function viewBlock() {
+  if (!CTX.day) { CTX = {day: currentDay(), block: 1}; }
+  const D = C.program.days[CTX.day - 1], b = D.blocks[CTX.block];
+  blockT0 = Date.now();
+  let h = `<p class="eyebrow" style="margin-top:20px"><a href="#aujourdhui" id="back">← Jour ${D.n}</a> · bloc ${CTX.block + 1} sur 3 · 50 minutes</p><h1>${esc(b.title)}</h1>`;
+  if (b.prompt) h += `<p class="muted">${esc(b.prompt)}</p>`;
+  h += `<div id="blockbody" class="stack"></div>
+    <div class="row" style="margin-top:22px"><button class="btn primary" id="finish">Terminer ce bloc</button><span class="small muted">Le bloc compte comme fait pour la journée ; tu peux y revenir.</span></div>`;
+  app.innerHTML = h;
+  $('#back').onclick = e => { e.preventDefault(); go('aujourdhui', {day: D.n}); };
+  $('#finish').onclick = () => { S.days[D.n] = S.days[D.n] || {b:{}}; S.days[D.n].b = S.days[D.n].b || {}; S.days[D.n].b[CTX.block] = true; logEvent('block', {day: D.n, block: CTX.block, ms: Date.now() - blockT0}); toast('Bloc enregistré'); go('aujourdhui', {day: D.n}); };
+  const body = $('#blockbody');
+  const kind = b.kind;
+  if (kind === 'placement') return blockPlacement(body, b);
+  if (kind === 'review') return blockReview(body, b);
+  if (kind === 'print') return blockPrint(body, D, b);
+  if (kind === 'maamar') return blockMaamar(body);
+  if (kind === 'import') { body.innerHTML = `<div class="card"><p style="margin:0 0 8px">${D.source ? 'Télécharge le PDF indiqué ci-dessous, puis importe-le ici. Le texte reconnu te sera montré pour correction avant toute lecture.' : 'Colle un passage ou importe un PDF de ton choix (par exemple depuis Mafteiach).'}</p><button class="btn primary" id="toimp">Ouvrir l'import</button></div>` + (D.source ? sourceBox({title: D.source.label, link: D.source.link, index: D.source.index, verify: "Lien donné par Mafteiach ; non encore ouvert ni vérifié."}) : ''); $('#toimp').onclick = () => go('importer'); return; }
+  const mode = (kind === 'test' || kind === 'auto') ? 'auto' : kind === 'reform' ? 'reduced' : S.prefs.mode === 'auto' ? 'auto' : 'guided';
+  for (const it of b.items) {
+    const el = document.createElement('div'); body.appendChild(el);
+    if (it.pid) mountReader(el, {pid: it.pid, sids: it.sids, mode, test: kind === 'test', synthesis: kind === 'synthesis', prompt: b.prompt, day: D.n, intro: b.intro});
+    else mountReader(el, {tid: it.tid, mode, test: kind === 'test', synthesis: kind === 'synthesis' || kind === 'test', prompt: b.prompt, day: D.n, final: b.final});
+  }
+  if (!b.items.length) body.innerHTML = `<div class="card muted">Ce bloc n'a pas de texte associé : utilise la révision espacée.</div>`;
+}
+
+/* ---------- LECTEUR ---------- */
+function unitFor(o) {
+  if (o.pid) { const p = P(o.pid); const sents = o.sids && o.sids.length ? p.sentences.filter(s => o.sids.includes(s.id)) : p.sentences; return {id: p.id, meta: p, sentences: sents, lex: {}, annotated: true}; }
+  const u = textUnit(o.tid); u.annotated = false; return u;
+}
+function mountReader(root, o) {
+  const U = unitFor(o);
+  if (!U) { root.innerHTML = '<div class="card">Texte introuvable.</div>'; return; }
+  const m = U.meta;
+  const st = {mode: o.mode, vowels: o.mode === 'guided' ? !!S.prefs.vowels : false, translit: o.mode === 'guided' ? !!S.prefs.translit : false, groups: false, sel: null, t0: Date.now(), aids: 0, started: !o.test};
+  const testKey = o.test ? 'j' + o.day : null;
+  const T = testKey ? (S.tests[testKey] = S.tests[testKey] || {id: U.id, aids: 0, words: []}) : null;
+  root.innerHTML = '';
+  root.className = 'stack';
+  const head = document.createElement('div');
+  const lang = m.lang || '';
+  head.innerHTML = `<div class="row" style="justify-content:space-between"><div><div class="eyebrow">${esc(m.parasha || '')}</div><h2 style="margin:4px 0 0">${esc(m.title)}</h2>
+    <div class="small muted">${esc(m.work || '')} · ${esc(m.ref || '')}</div></div>
+    ${U.generated || U.annotated ? '' : statusChip('prepare')}</div>
+    <div class="small" style="margin-top:6px"><b>Langue :</b> ${esc(lang)}</div>` + sourceBox(m);
+  root.appendChild(head);
+  if (o.intro) { const n = document.createElement('div'); n.className = 'notice small'; n.innerHTML = `<b>Comment lire.</b> Lis d'abord la phrase sans aide. Puis, si besoin : <b>Voyelles</b> ou <b>Translittération</b> (aides ajoutées), <b>touche un mot</b> pour son sens dans la phrase, <b>Groupes de sens</b> pour voir le découpage et le rôle de chaque groupe, puis <b>écris ce que tu as compris</b> avant d'ouvrir la traduction. Les mots touchés partent en révision.`; root.appendChild(n); }
+  if (o.test) {
+    const tb = document.createElement('div'); tb.className = 'card';
+    tb.innerHTML = `<div class="row" style="justify-content:space-between"><div><b>${o.final ? 'Examen final' : 'Bilan'} en lecture autonome.</b> <span class="small muted">Pas de voyelles ni de groupes de sens. Le dictionnaire (toucher un mot) reste disponible et chaque consultation est comptée. La traduction s'affiche après ta réponse.</span></div>
+      <div class="row"><span class="timer" id="tm">00:00</span><button class="btn primary sm" id="tstart">${T.start ? 'Reprendre' : 'Je commence à lire'}</button></div></div>`;
+    root.appendChild(tb);
+  }
+  if (!U.annotated && !U.generated) {
+    const pr = document.createElement('div'); pr.className = 'warnbox small';
+    pr.innerHTML = `Ce texte est intégré tel qu'il figure dans le document, mais ses aides mot à mot ne sont pas encore préparées. Les mots déjà connus du lexique s'affichent quand même. ${SAMPLE ? '<button class="btn sm" id="prep" style="margin-inline-start:6px">Préparer les aides avec Claude</button>' : '<br>Claude n\'est pas disponible ici : utilise les liens de dictionnaire sur chaque mot.'} <span id="prepst"></span>`;
+    root.appendChild(pr);
+    pr.querySelector('#prep') && (pr.querySelector('#prep').onclick = () => prepareAids(o.tid, pr.querySelector('#prepst'), () => mountReader(root, o)));
+  } else if (U.generated) {
+    const pr = document.createElement('div'); pr.className = 'warnbox small'; pr.textContent = "Aides générées automatiquement par Claude à partir du texte vérifié : vocalisation, sens et traduction sont à vérifier. Le texte hébreu, lui, n'a pas été modifié."; root.appendChild(pr);
+  }
+  const ed = document.createElement('section'); ed.className = 'edition';
+  ed.innerHTML = `<div class="zone-label">Texte de l'édition <span class="muted" style="text-transform:none;letter-spacing:0;font-weight:500" id="vnote"></span></div><div id="sents"></div>`;
+  root.appendChild(ed);
+  const tools = document.createElement('div'); tools.className = 'toolbar';
+  root.insertBefore(tools, ed);
+  const aidZone = document.createElement('section'); aidZone.className = 'aid'; aidZone.hidden = true; root.appendChild(aidZone);
+  const tail = document.createElement('div'); tail.className = 'stack'; root.appendChild(tail);
+
+  function drawTools() {
+    if (st.mode === 'auto') { tools.innerHTML = `<span class="small muted">Mode autonome : touche un mot pour le dictionnaire (${st.aids} consultation${st.aids > 1 ? 's' : ''}).</span>`; return; }
+    tools.innerHTML = `<button class="tbtn ${st.vowels ? 'on' : ''}" data-t="vowels">Voyelles <span class="n">aide</span></button>
+      <button class="tbtn ${st.translit ? 'on' : ''}" data-t="translit">Translittération</button>
+      ${U.annotated || U.generated ? `<button class="tbtn ${st.groups ? 'on' : ''}" data-t="groups">Groupes de sens</button>` : ''}
+      <span class="small muted" style="align-self:center">Touche un mot pour son sens dans la phrase.</span>`;
+    $$('[data-t]', tools).forEach(b => b.onclick = () => { const k = b.dataset.t; st[k] = !st[k]; countAid(k); drawTools(); drawSents(); });
+  }
+  function countAid(k) { st.aids++; if (T) { T.aids = (T.aids || 0) + 1; } logEvent('aid', {u: U.id, k}); }
+  function drawSents() {
+    $('#vnote', ed).textContent = st.vowels ? '· voyelles ajoutées en aide (pointillés), pas dans l\'édition' : '';
+    const box = $('#sents', ed);
+    if (o.test && !T.start) { box.innerHTML = `<p class="muted">Le texte s'affichera quand tu cliqueras sur « Je commence à lire ».</p>`; return; }
+    box.innerHTML = '';
+    U.sentences.forEach(s => box.appendChild(sentenceEl(s)));
+  }
+  function sentenceEl(s) {
+    const el = document.createElement('div'); el.className = 'sent';
+    const R = S.reads[s.id] = S.reads[s.id] || {};
+    const list = toks(s.he);
+    let ti = 0;
+    const lineCls = 'heline' + (st.groups ? ' groups' : '');
+    let html = `<div class="${lineCls}">`;
+    for (const c of s.chunks) {
+      const ct = toks(c.he);
+      html += `<span class="chunk ${c.role ? 'role-' + esc(c.role) : ''}">${st.groups && c.role ? `<span class="role">${esc(ROLES[c.role] || c.role)}</span>` : ''}`;
+      for (let k = 0; k < ct.length; k++, ti++) {
+        const t = list[ti]; if (!t) continue;
+        if (!t.n) { html += `<span class="tok"><span class="punc">${esc(t.raw)}</span>${st.translit ? '<span class="tl"></span>' : ''}</span> `; continue; }
+        const L = lexFor(list, ti, s.id, U.lex);
+        const e = L && L.e;
+        const vocal = st.vowels && e && e.v && !['abbr','num'].includes(e.k);
+        const shown = vocal ? e.v : t.n;
+        const seen = (R.words || []).includes(ti);
+        const isSel = st.sel && st.sel.sid === s.id && st.sel.i === ti;
+        html += `<span class="tok"><span class="wrow">${t.pre ? `<span class="punc">${esc(t.pre)}</span>` : ''}<button type="button" class="w ${e && e.k === 'conn' && st.mode !== 'auto' ? 'k-conn' : ''} ${vocal ? 'voc' : ''} ${seen ? 'seen' : ''} ${isSel ? 'sel' : ''}" data-i="${ti}">${esc(shown || t.raw)}</button>${t.suf ? `<span class="punc">${esc(t.suf)}</span>` : ''}</span>${st.translit ? `<span class="tl">${esc(e ? e.tr : '')}</span>` : ''}</span> `;
+      }
+      html += `</span> `;
+    }
+    html += `</div>`;
+    el.innerHTML = html;
+    $$('.w', el).forEach(b => b.onclick = () => selectWord(s, list, +b.dataset.i, el));
+    if (st.groups && s.chunks.length > 1 && st.mode !== 'auto') {
+      const g = document.createElement('div'); g.className = 'aid small';
+      g.innerHTML = `<div class="zone-label">Groupes de sens · aide ajoutée</div>` + s.chunks.map((c, i) => `<div style="margin:6px 0;display:flex;gap:8px;flex-wrap:wrap;align-items:center"><span class="chip">${esc(ROLES[c.role] || c.role || '—')}</span><bdi class="he" style="font-size:18px">${esc(c.he.length > 60 ? c.he.slice(0, 60) + '…' : c.he)}</bdi><button class="btn ghost sm" data-g="${i}">Glose du groupe</button><span data-gl="${i}" hidden>${esc(c.fr)}</span></div>`).join('');
+      $$('[data-g]', g).forEach(b => b.onclick = () => { const x = $(`[data-gl="${b.dataset.g}"]`, g); x.hidden = !x.hidden; if (!x.hidden) countAid('chunk'); });
+      el.appendChild(g);
+    }
+    if (st.mode !== 'auto' && !o.test) el.appendChild(reformBox(s, R));
+    return el;
+  }
+  function reformBox(s, R) {
+    const w = document.createElement('div'); w.className = 'stack';
+    const hasFr = !!s.fr;
+    const revealed = !!R.revealed;
+    w.innerHTML = `<details ${R.reform || revealed ? 'open' : ''}><summary class="small">Ce que j'ai compris (avant la traduction)</summary>
+      <textarea placeholder="Écris en français ce que dit cette phrase, même partiellement.">${esc(R.reform || '')}</textarea>
+      <div class="row" style="margin-top:6px"><button class="btn sm" data-a="save">Enregistrer</button>
+      ${hasFr ? `<button class="btn sm ${revealed ? '' : 'primary'}" data-a="reveal" ${R.reform || revealed ? '' : 'disabled'}>Afficher la traduction</button><button class="btn ghost sm" data-a="force">Je n'ai pas compris, montrer quand même</button>` : ''}
+      ${SAMPLE && hasFr ? `<button class="btn ghost sm" data-a="claude">Comparer avec Claude</button>` : ''}</div>
+      <div data-fb></div></details>
+      <div data-tr></div>`;
+    const ta = $('textarea', w);
+    const showTr = () => {
+      const box = $('[data-tr]', w);
+      box.innerHTML = `<div class="trans"><div class="zone-label">Traduction proposée (Claude) · pas dans l'édition</div><p style="margin:0">${esc(s.fr)}</p>${s.note ? `<p class="small" style="margin:8px 0 0"><b>Aide :</b> ${esc(s.note)}</p>` : ''}</div>` + transferHTML(s, R);
+      bindTransfer(box, s);
+    };
+    if (revealed) showTr();
+    $('[data-a=save]', w).onclick = () => { R.reform = ta.value.trim(); save(); const r = $('[data-a=reveal]', w); if (r) r.disabled = !R.reform; toast('Enregistré'); };
+    ta.oninput = () => { const r = $('[data-a=reveal]', w); if (r) r.disabled = ta.value.trim().length < 3; };
+    $('[data-a=reveal]', w) && ($('[data-a=reveal]', w).onclick = () => { R.reform = ta.value.trim(); R.revealed = true; countAid('translation'); save(); showTr(); });
+    $('[data-a=force]', w) && ($('[data-a=force]', w).onclick = () => { R.revealed = true; R.forced = true; countAid('translation'); save(); showTr(); });
+    $('[data-a=claude]', w) && ($('[data-a=claude]', w).onclick = () => claudeSentence(s, ta.value.trim(), $('[data-fb]', w)));
+    return w;
+  }
+  function transferHTML(s, R) {
+    const words = (R.words || []).map(i => toks(s.he)[i]).filter(Boolean);
+    const items = [];
+    for (const t of words) { const occ = otherOccurrences(t.n, s.id, 1)[0]; if (occ) items.push({t, occ}); }
+    if (!items.length) return '';
+    return `<div class="aid" style="margin-top:8px"><div class="zone-label">Revoir ailleurs · aide ajoutée</div><p class="small" style="margin:0 0 6px">Les mots que tu as touchés, dans une autre phrase. Que signifient-ils ici ?</p>` +
+      items.slice(0, 3).map((x, k) => `<div style="margin:8px 0"><div class="heline small">${hlSentence(x.occ.he, x.occ.i)}</div><div class="small muted">${esc(srcLabel(x.occ))}</div><button class="btn sm" data-x="${k}">Vérifier</button> <span data-xa="${k}" hidden>${esc(glossAt(x.occ))}</span></div>`).join('') + `</div>`;
+  }
+  function bindTransfer(box, s) { $$('[data-x]', box).forEach(b => b.onclick = () => { $(`[data-xa="${b.dataset.x}"]`, box).hidden = false; }); }
+  function selectWord(s, list, i, el) {
+    st.sel = {sid: s.id, i};
+    const R = S.reads[s.id] = S.reads[s.id] || {};
+    R.words = R.words || []; if (!R.words.includes(i)) R.words.push(i);
+    const t = list[i];
+    const L = lexFor(list, i, s.id, U.lex);
+    if (T) { T.words = T.words || []; T.words.push(t.n); }
+    countAid('word');
+    if (st.mode === 'auto') drawTools();
+    if (L && st.mode !== 'auto') addCard(L.key, s.id, U.id);
+    if (L && st.mode === 'auto' && o.test) addCard(L.key, s.id, U.id);
+    drawSents();
+    aidZone.hidden = false;
+    aidZone.innerHTML = wordCardHTML(t, L, s, U);
+    $$('[data-addcard]', aidZone).forEach(b => b.onclick = () => { addCard(b.dataset.addcard, s.id, U.id); toast('Ajouté à la révision'); });
+    $('[data-close]', aidZone).onclick = () => { aidZone.hidden = true; st.sel = null; drawSents(); };
+    if (window.innerWidth < 1100) aidZone.scrollIntoView({block: 'nearest', behavior: 'smooth'});
+    save();
+  }
+  drawTools(); drawSents();
+  // queue de lecture : questions, reformulation globale, test
+  if (o.test || o.synthesis || st.mode === 'auto') tail.appendChild(passageWork(U, o, st, T));
+  if (o.test) {
+    const tm = $('#tm', root), btn = $('#tstart', root);
+    let iv = null;
+    const tick = () => { const s = Math.floor(((T.end || Date.now()) - T.start) / 1000) + (T.prev || 0); tm.textContent = String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
+    if (T.start) { iv = setInterval(tick, 1000); tick(); btn.hidden = true; }
+    btn.onclick = () => { T.start = Date.now(); T.end = null; save(); btn.hidden = true; iv = setInterval(tick, 1000); drawSents(); };
+    root._stopTimer = () => { if (T.start && !T.end) { T.end = Date.now(); T.sec = Math.floor((T.end - T.start) / 1000); save(); clearInterval(iv); tick(); } };
+  }
+}
+function hlSentence(he, idx) {
+  return toks(he).map((t, i) => (t.pre ? esc(t.pre) : '') + (i === idx ? `<span class="hl">${esc(t.n)}</span>` : esc(t.n)) + (t.suf ? esc(t.suf) : '')).join(' ');
+}
+function srcLabel(occ) {
+  if (occ.pid) { const p = P(occ.pid); return p.work + ' · ' + p.ref; }
+  const t = C.texts[occ.tid]; return t ? t.work + ' · ' + t.ref : '';
+}
+function glossAt(occ) {
+  if (occ.pid) { const p = P(occ.pid); const s = p.sentences.find(x => x.id === occ.sid); const l = toks(s.he); const L = lexFor(l, occ.i, s.id); return L ? L.e.g + (L.e.p ? ' — ' + L.e.p : '') : 'Pas d\'aide pour ce mot.'; }
+  const l = toks(occ.he); const L = lexFor(l, occ.i, occ.sid, (S.ann[occ.tid] || {}).words); return L ? 'Sens général : ' + L.e.g : 'Pas encore d\'aide pour ce mot dans ce texte.';
+}
+function dictLinks(n) {
+  const q = encodeURIComponent(bareWord(n).replace(/["']/g, ''));
+  return `<a href="https://www.pealim.com/search/?q=${q}" target="_blank" rel="noopener">Pealim (verbes)</a> · <a href="https://www.morfix.co.il/${q}" target="_blank" rel="noopener">Morfix</a> · <a href="https://milog.co.il/${q}" target="_blank" rel="noopener">Milog</a>`;
+}
+function wordCardHTML(t, L, s, U) {
+  const e = L && L.e;
+  const fromOther = L && !U.annotated && !U.lex[L.key];
+  return `<div class="zone-label">Aide ajoutée · le mot dans cette phrase <button class="btn ghost sm" data-close style="margin-inline-start:auto">Fermer</button></div>
+  <dl class="wordcard">
+    <dt>Mot</dt><dd style="display:flex;gap:14px;flex-wrap:wrap;align-items:baseline"><bdi class="big">${esc(t.n)}</bdi>${e && e.v ? `<bdi class="he" style="font-size:22px">${esc(e.v)}</bdi><span class="small muted">${e.k === 'abbr' ? 'développement' : 'vocalisation ajoutée'}</span>` : ''}</dd>
+    ${e ? `<dt>Lecture</dt><dd>${esc(e.tr)}</dd>
+    <dt>Sens ${fromOther ? 'général' : 'ici'}</dt><dd><b>${esc(e.g)}</b>${fromOther ? ' <span class="small muted">(tiré d\'un autre passage : vérifie dans le contexte)</span>' : ''}</dd>
+    ${e.p ? `<dt>Décomposition</dt><dd>${esc(e.p)}</dd>` : ''}
+    ${e.d ? `<dt>À chercher</dt><dd><span class="he" style="font-size:20px">${esc(e.d)}</span></dd>` : ''}
+    ${e.k ? `<dt>Type</dt><dd>${esc(KIND[e.k] || e.k)}</dd>` : ''}
+    ${e.x ? `<dt>Note</dt><dd>${esc(e.x)}</dd>` : ''}` : `<dt>Sens</dt><dd>Pas encore d'aide pour ce mot.</dd>`}
+    <dt>Dictionnaire</dt><dd class="small">${dictLinks(t.n)}</dd>
+  </dl>
+  ${otherOccurrences(t.n, s.id, 2).length ? `<details style="margin-top:8px"><summary class="small">Ailleurs dans les textes</summary>${otherOccurrences(t.n, s.id, 2).map(oc => `<div class="heline small">${hlSentence(oc.he, oc.i)}</div><div class="small muted">${esc(srcLabel(oc))}</div>`).join('')}</details>` : ''}
+  ${L ? `<div class="row" style="margin-top:8px"><button class="btn sm" data-addcard="${esc(L.key)}">Ajouter à la révision</button></div>` : ''}`;
+}
+
+/* --- travail sur le passage : questions + reformulation question/étapes/conclusion --- */
+function passageWork(U, o, st, T) {
+  const w = document.createElement('div'); w.className = 'stack';
+  const key = (o.test ? 'test-j' + o.day : 'syn-' + U.id + (o.sids && o.sids.length ? '-' + o.sids.join('_') : ''));
+  const RF = S.reform[key] = S.reform[key] || {};
+  const qs = (U.annotated ? (C.passageQuestions[U.id] || []).filter(q => !q.sid || !o.sids || !o.sids.length || o.sids.includes(q.sid) || o.synthesis) : (C.texts[U.id] || {}).questions || []);
+  const ref = U.annotated ? C.refAnswers[U.id] : (C.texts[U.id] || {}).ref_answer;
+  let h = '';
+  if (qs.length) h += `<div class="card"><h3>Questions de compréhension</h3>${qs.map((q, i) => `<div style="margin-top:10px"><div>${i + 1}. ${esc(q.q)}</div>${q.opts.map((x, j) => `<button type="button" class="opt" data-q="${i}" data-o="${j}">${esc(x)}</button>`).join('')}</div>`).join('')}</div>`;
+  h += `<div class="card"><h3>Reformulation en français</h3><p class="small muted" style="margin-top:0">${esc(o.prompt || 'Dis avec tes mots la question, les étapes du raisonnement et la conclusion.')}</p>
+    <label class="small">Quelle question le Rabbi pose-t-il ?</label><textarea data-f="question">${esc(RF.question || '')}</textarea>
+    <label class="small">Comment construit-il sa réponse (étapes) ?</label><textarea data-f="steps">${esc(RF.steps || '')}</textarea>
+    <label class="small">Quelle conclusion en tire-t-il ?</label><textarea data-f="conclusion">${esc(RF.conclusion || '')}</textarea>
+    <div class="row" style="margin-top:8px"><button class="btn primary" data-a="submit">J'ai terminé : enregistrer ma réponse</button>
+    ${SAMPLE ? '<button class="btn" data-a="claude" disabled>Faire corriger par Claude</button>' : ''}
+    <button class="btn ghost" data-a="ref" ${RF.submitted ? '' : 'disabled'}>Voir la réponse de référence</button></div>
+    <div data-out></div></div>`;
+  w.innerHTML = h;
+  const answers = RF.answers = RF.answers || {};
+  function paintQ() {
+    $$('[data-q]', w).forEach(b => { const i = +b.dataset.q, j = +b.dataset.o; b.classList.remove('right', 'wrong'); if (answers[i] !== undefined) { if (j === qs[i].a) b.classList.add('right'); else if (j === answers[i]) b.classList.add('wrong'); } });
+  }
+  $$('[data-q]', w).forEach(b => b.onclick = () => { const i = +b.dataset.q; if (answers[i] !== undefined) return; answers[i] = +b.dataset.o; if (answers[i] !== qs[i].a) { const tag = qs[i].tag || 'sens'; S.errors[tag] = (S.errors[tag] || 0) + 1; } save(); paintQ(); });
+  paintQ();
+  $$('[data-f]', w).forEach(t => t.onchange = () => { RF[t.dataset.f] = t.value.trim(); save(); });
+  const out = $('[data-out]', w);
+  const sub = $('[data-a=submit]', w), cl = $('[data-a=claude]', w), rf = $('[data-a=ref]', w);
+  const done = () => { rf.disabled = false; if (cl) cl.disabled = false; };
+  if (RF.submitted) done();
+  sub.onclick = () => {
+    $$('[data-f]', w).forEach(t => RF[t.dataset.f] = t.value.trim());
+    RF.submitted = Date.now();
+    const nq = qs.length, ok = qs.filter((q, i) => answers[i] === q.a).length;
+    RF.qscore = nq ? ok / nq : null;
+    if (T) { T.qscore = RF.qscore; T.reform = {question: RF.question, steps: RF.steps, conclusion: RF.conclusion}; T.words = T.words || []; T.wordCount = U.sentences.reduce((a, s) => a + toks(s.he).length, 0); stopAnyTimer(w); if (T.start) { T.end = T.end || Date.now(); T.sec = T.sec || Math.floor((T.end - T.start) / 1000); } }
+    save(); done(); toast('Réponse enregistrée');
+    showTranslation();
+  };
+  function showTranslation() {
+    if (!U.annotated && !U.generated) return;
+    if (out.querySelector('.trans')) return;
+    const d = document.createElement('div'); d.className = 'trans'; d.style.marginTop = '10px';
+    d.innerHTML = `<div class="zone-label">Traduction proposée${U.generated ? ' (générée par Claude, à vérifier)' : ''} · pas dans l'édition</div>` + U.sentences.map(s => `<p style="margin:0 0 6px">${esc(s.fr)}</p>`).join('');
+    out.appendChild(d);
+  }
+  if (RF.submitted) showTranslation();
+  rf.onclick = () => {
+    if (!ref) { out.insertAdjacentHTML('beforeend', '<p class="small muted">Pas de réponse de référence pour ce texte.</p>'); return; }
+    out.insertAdjacentHTML('beforeend', `<div class="aid" style="margin-top:10px"><div class="zone-label">Réponse de référence · aide ajoutée</div><p><b>Question :</b> ${esc(ref.question)}</p><p><b>Étapes :</b> ${esc(ref.steps)}</p><p style="margin:0"><b>Conclusion :</b> ${esc(ref.conclusion)}</p></div>`);
+    rf.disabled = true;
+  };
+  if (cl) cl.onclick = () => claudeCorrect(U, RF, ref, out, T);
+  if (RF.feedback) out.appendChild(feedbackEl(RF.feedback, U));
+  return w;
+}
+function stopAnyTimer(el) { let p = el; while (p) { if (p._stopTimer) { p._stopTimer(); return; } p = p.parentElement; } }
+
+/* ---------- Claude : correction de la reformulation ---------- */
+async function claudeCorrect(U, RF, ref, out, T) {
+  const he = U.sentences.map(s => s.he).join(' ');
+  const fr = U.sentences.map(s => s.fr).filter(Boolean).join(' ');
+  const prompt = `Tu es un professeur qui corrige un élève francophone débutant en hébreu, qui apprend à lire les sichot du Rabbi de Loubavitch.
+TEXTE HÉBREU (seule source faisant foi) :
+"""${he}"""
+${fr ? 'TRADUCTION DE TRAVAIL (aide, peut être imparfaite) :\n"""' + fr + '"""\n' : ''}${ref ? 'RÉSUMÉ DE RÉFÉRENCE :\nQuestion : ' + ref.question + '\nÉtapes : ' + ref.steps + '\nConclusion : ' + ref.conclusion + '\n' : ''}
+REFORMULATION DE L'ÉLÈVE :
+Question : ${RF.question || '(vide)'}
+Étapes : ${RF.steps || '(vide)'}
+Conclusion : ${RF.conclusion || '(vide)'}
+
+Corrige sa compréhension en français simple et bienveillant. Pour CHAQUE point, cite entre « » le passage hébreu exact qui soutient la correction (copie exacte d'un extrait du TEXTE HÉBREU, 3 à 15 mots, sans rien changer). Ne cite jamais un texte qui n'est pas dans le TEXTE HÉBREU.
+Réponds uniquement en JSON : {"score":{"question":0-2,"etapes":0-2,"conclusion":0-2},"points":[{"type":"juste|imprecis|faux|manque","partie":"question|etapes|conclusion","commentaire":"...","citation":"extrait hébreu exact"}],"resume":"2 phrases","conseil":"une chose à revoir"}`;
+  const box = document.createElement('div'); box.className = 'aid'; box.style.marginTop = '10px'; box.innerHTML = '<div class="zone-label">Correction par Claude</div><p class="small">Claude lit ta réponse… (cela peut prendre une minute)</p>';
+  out.appendChild(box);
+  try {
+    const r = await SAMPLE.json(prompt, {modelTier: 'default'});
+    RF.feedback = r; if (T) T.feedback = r; save();
+    box.replaceWith(feedbackEl(r, U));
+  } catch(e) { box.innerHTML = `<div class="zone-label">Correction par Claude</div><p class="small">${esc(sampleErr(e))}</p>`; }
+}
+function feedbackEl(r, U) {
+  const he = U.sentences.map(s => s.he).join(' ').replace(/\s+/g, ' ');
+  const norm = x => String(x || '').replace(/[«»"״]/g, '').replace(/\s+/g, ' ').trim();
+  const el = document.createElement('div'); el.className = 'aid'; el.style.marginTop = '10px';
+  const sc = r.score || {}; const tot = (sc.question || 0) + (sc.etapes || 0) + (sc.conclusion || 0);
+  el.innerHTML = `<div class="zone-label">Correction par Claude · ${tot}/6</div>
+    <p class="small" style="margin-top:0">Question ${sc.question ?? '–'}/2 · Étapes ${sc.etapes ?? '–'}/2 · Conclusion ${sc.conclusion ?? '–'}/2</p>` +
+    (r.points || []).map(p => { const found = p.citation && norm(he).includes(norm(p.citation)); return `<div class="fb-pt ${esc(p.type)}"><b>${esc(p.partie || '')}</b> — ${esc(p.commentaire)}${p.citation ? `<div class="he" style="font-size:19px;margin-top:4px">« ${esc(p.citation)} »</div>${found ? '' : '<div class="small" style="color:var(--bad)">Citation non retrouvée telle quelle dans le texte : à vérifier.</div>'}` : ''}</div>`; }).join('') +
+    (r.resume ? `<p class="small"><b>En bref :</b> ${esc(r.resume)}</p>` : '') + (r.conseil ? `<p class="small" style="margin:0"><b>À revoir :</b> ${esc(r.conseil)}</p>` : '');
+  return el;
+}
+async function claudeSentence(s, text, out) {
+  if (!text) { out.innerHTML = '<p class="small">Écris d\'abord ce que tu as compris.</p>'; return; }
+  out.innerHTML = '<p class="small muted">Claude compare…</p>';
+  try {
+    const r = await SAMPLE(`Un élève francophone débutant lit cette phrase hébraïque d'une sicha : """${s.he}""". Traduction de travail : """${s.fr}""". Sa compréhension : """${text}""". En 3 phrases maximum, en français simple : dis ce qui est juste, ce qui manque ou est faux, en citant entre « » le ou les mots hébreux concernés (copiés exactement de la phrase).`, {modelTier: 'quick'});
+    out.innerHTML = `<div class="aid small" style="margin-top:6px"><div class="zone-label">Remarque de Claude</div>${esc(r.text)}</div>`;
+  } catch(e) { out.innerHTML = `<p class="small">${esc(sampleErr(e))}</p>`; }
+}
+/* ---------- Claude : préparer les aides d'un texte vérifié ---------- */
+async function prepareAids(tid, status, done) {
+  const u = textUnit(tid);
+  const ann = {sentences: [], words: {}, at: Date.now(), by: 'claude'};
+  const batches = []; for (let i = 0; i < u.sentences.length; i += 3) batches.push(u.sentences.slice(i, i + 3));
+  let k = 0;
+  for (const b of batches) {
+    status.textContent = `Préparation ${++k}/${batches.length}… (Claude réfléchit, cela peut être long)`;
+    const prompt = `Tu prépares des aides de lecture pour un francophone débutant qui lit une sicha du Rabbi de Loubavitch en hébreu. NE MODIFIE JAMAIS le texte hébreu.
+Phrases (chacune avec son numéro) :
+${b.map((s, j) => (j) + ': ' + s.he).join('\n')}
+Pour chaque phrase, découpe-la en groupes de sens CONSÉCUTIFS dont la concaténation (séparée par des espaces) redonne EXACTEMENT la phrase, attribue à chaque groupe un rôle parmi : cadre, citation, question, tentative, objection, reponse, explication, preuve, consequence, conclusion, parenthese, exemple, lecon, preambule ; donne une glose française du groupe, une traduction française fidèle de la phrase, et une courte note d'aide (connecteurs, abréviations développées, référence citée).
+Pour chaque mot (forme exacte du texte, sans ponctuation), donne : v = le mot vocalisé (ou le développement si abréviation), tr = translittération simple (prononciation israélienne, à la française), g = sens dans cette phrase, p = décomposition préfixes/suffixes si utile, d = forme à chercher au dictionnaire, k = conn|abbr|name|verb|aram|num ou vide, x = note brève si nécessaire.
+Réponds uniquement en JSON : {"sentences":[{"n":0,"chunks":[{"he":"...","role":"...","fr":"..."}],"fr":"...","note":"..."}],"words":{"mot":{"v":"","tr":"","g":"","p":"","d":"","k":"","x":""}}}`;
+    try {
+      const r = await SAMPLE.json(prompt, {modelTier: 'default'});
+      (r.sentences || []).forEach((x, j) => { ann.sentences[u.sentences.indexOf(b[j])] = {chunks: x.chunks, fr: x.fr, note: x.note}; });
+      Object.assign(ann.words, r.words || {});
+    } catch(e) { status.textContent = sampleErr(e); if (!ann.sentences.length) return; break; }
+  }
+  ann._dirty = true; S.ann[tid] = ann; save(); buildOcc();
+  status.textContent = 'Aides prêtes (à vérifier).';
+  done();
+}
+
+/* ---------- révision espacée ---------- */
+const BOX_DAYS = [0, 0, 1, 3, 7, 14];
+function addCard(key, sid, uid) { if (!S.srs[key]) { S.srs[key] = {box: 1, due: todayISO(), sid, uid, added: Date.now()}; save(); } }
+function seedKeys() { /* expressions-clés */ for (const k of C.keys) { const id = 'key:' + k[0]; if (!S.srs[id]) S.srs[id] = {box: 1, due: todayISO(), key: true}; } }
+function blockReview(body, b) {
+  body.innerHTML = `<div class="card"><h3>Relecture rapide</h3><p class="small muted" style="margin-top:0">Relis à voix haute les phrases d'hier, sans aide d'abord. Puis passe aux cartes.</p><div id="rr"></div></div><div id="rv"></div>`;
+  const rr = $('#rr', body);
+  for (const it of b.items) { if (it.pid) mountReader(rr.appendChild(document.createElement('div')), {pid: it.pid, sids: it.sids, mode: 'reduced', day: 0}); }
+  if (!b.items.length) rr.innerHTML = '<p class="small muted">Pas de phrase imposée aujourd\'hui.</p>';
+  reviewSession($('#rv', body));
+}
+function viewReview() {
+  app.innerHTML = `<h1>Révision espacée</h1><p class="muted">Chaque mot touché dans le lecteur et chaque expression-clé devient une carte. Tu la revois dans une autre phrase quand c'est possible, pour vérifier que tu la reconnais ailleurs.</p><div id="rv"></div><h2>Expressions-clés pour suivre une sicha</h2><div class="tabwrap"><table class="tab"><thead><tr><th>Expression</th><th>Développement</th><th>Sens / rôle</th></tr></thead><tbody>${C.keys.map(k => `<tr><td class="he" style="font-size:20px">${esc(k[0])}</td><td class="he">${esc(k[1])}</td><td>${esc(k[2])}</td></tr>`).join('')}</tbody></table></div>`;
+  reviewSession($('#rv'));
+}
+function reviewSession(root) {
+  seedKeys();
+  const due = dueCards().sort((a, b) => (a[1].key ? 1 : 0) - (b[1].key ? 1 : 0) || a[1].box - b[1].box).slice(0, 25);
+  if (!due.length) { root.innerHTML = `<div class="card">Rien à réviser maintenant. Les mots que tu touches dans le lecteur s'ajoutent ici.</div>`; return; }
+  let i = 0;
+  const show = () => {
+    if (i >= due.length) { root.innerHTML = `<div class="card"><b>Session terminée.</b> ${due.length} carte${due.length > 1 ? 's' : ''} revue${due.length > 1 ? 's' : ''}.</div>`; return; }
+    const [key, card] = due[i];
+    let front = '', back = '', ctx = '';
+    if (card.key) {
+      const k = C.keys.find(x => 'key:' + x[0] === key);
+      front = `<div class="flash">${esc(k[0])}</div><p class="small muted" style="text-align:center">Expression-clé : que signale-t-elle dans le raisonnement ?</p>`;
+      back = `<p><b>${esc(k[2])}</b></p>${k[1] ? `<p class="he" style="font-size:20px">${esc(k[1])}</p>` : ''}`;
+    } else {
+      const n = key.split(/[@>]/)[0];
+      const occ = otherOccurrences(n, card.sid, 1)[0];
+      if (occ) { front = `<div class="heline">${hlSentence(occ.he, occ.i)}</div><p class="small muted">${esc(srcLabel(occ))} · autre phrase que celle où tu l'as rencontré</p>`; back = `<p>${esc(glossAt(occ))}</p>`; }
+      else { const e = C.lex[key] || {}; front = `<div class="flash">${esc(n)}</div>`; back = `<p><b>${esc(e.g || '')}</b>${e.v ? ` · <span class="he">${esc(e.v)}</span>` : ''}</p>${e.p ? `<p class="small">${esc(e.p)}</p>` : ''}`; }
+      const e = C.lex[key]; if (e) ctx = `<p class="small muted">Sens rencontré : ${esc(e.g)} · ${esc(e.tr || '')}</p>`;
+    }
+    root.innerHTML = `<div class="card"><div class="row" style="justify-content:space-between"><span class="eyebrow">Carte ${i + 1} / ${due.length} · boîte ${card.box}</span></div>${front}
+      <div id="back" hidden>${back}${ctx}</div>
+      <div class="row" style="justify-content:center;margin-top:10px"><button class="btn primary" id="flip">Voir la réponse</button></div>
+      <div class="row" id="grade" hidden style="justify-content:center;margin-top:10px"><button class="btn" data-g="0">Je ne savais pas</button><button class="btn" data-g="1">J'ai hésité</button><button class="btn primary" data-g="2">Je savais</button></div></div>`;
+    $('#flip', root).onclick = () => { $('#back', root).hidden = false; $('#grade', root).hidden = false; $('#flip', root).hidden = true; };
+    $$('[data-g]', root).forEach(b => b.onclick = () => {
+      const g = +b.dataset.g;
+      if (g === 0) { card.box = 1; card.lapses = (card.lapses || 0) + 1; card.due = todayISO(); due.push([key, card]); }
+      else if (g === 1) { card.due = addDays(todayISO(), 1); }
+      else { card.box = Math.min(5, card.box + 1); card.due = addDays(todayISO(), BOX_DAYS[card.box]); }
+      card.seen = (card.seen || 0) + 1; save(); i++; show();
+    });
+  };
+  show();
+}
+
+/* ---------- test de positionnement ---------- */
+function viewPlacement() { app.innerHTML = `<h1>Test de positionnement</h1><p class="muted">Cinq minutes : reconnaître des lettres, puis lire quelques mots avec et sans voyelles. Le test s'arrête dès que ton niveau est clair.</p><div id="pl"></div>`; runPlacement($('#pl'), () => go('aujourdhui')); }
+function runPlacement(root, after) {
+  const PL = C.placement;
+  const res = {letters: [0, 0], voc: [0, 0], unvoc: [0, 0]};
+  const seq = [['letters', PL.letters.slice(0, 10)], ['voc', PL.voc], ['unvoc', PL.unvoc]];
+  let si = 0, qi = 0;
+  const titles = {letters: 'Reconnais la lettre', voc: 'Lis le mot (avec voyelles)', unvoc: 'Lis le mot (sans voyelles)'};
+  const step = () => {
+    if (si >= seq.length) return finish();
+    const [sec, items] = seq[si];
+    const [ok, n] = res[sec];
+    if (sec === 'letters' && ((n >= 6 && ok >= n - 1) || (n - ok >= 4))) { si++; qi = 0; return step(); }
+    if (sec !== 'letters' && n >= 4 && (ok >= n || n - ok >= 3)) { si++; qi = 0; return step(); }
+    if (qi >= items.length) { si++; qi = 0; return step(); }
+    if (sec === 'voc' && res.letters[0] / Math.max(1, res.letters[1]) < .6) return finish();
+    if (sec === 'unvoc' && res.voc[0] / Math.max(1, res.voc[1]) < .5) return finish();
+    const it = items[qi];
+    root.innerHTML = `<div class="card"><span class="eyebrow">${titles[sec]} · ${sec === 'letters' ? 'lettres' : sec === 'voc' ? 'déchiffrage avec voyelles' : 'déchiffrage sans voyelles'}</span>
+      <div class="${sec === 'letters' ? 'big-letter' : 'flash'}">${esc(it.he)}</div>
+      ${it.opts.map((o, j) => `<button class="opt" data-j="${j}">${esc(o)}</button>`).join('')}
+      <button class="btn ghost sm" data-j="-1" style="margin-top:6px">Je ne sais pas</button></div>`;
+    $$('[data-j]', root).forEach(b => b.onclick = () => { const j = +b.dataset.j; res[sec][1]++; if (j === it.a) res[sec][0]++; qi++; step(); });
+  };
+  const finish = () => {
+    const r = k => res[k][1] ? res[k][0] / res[k][1] : null;
+    const L = r('letters'), V = r('voc'), U = r('unvoc');
+    let level = 'D';
+    if (L === null || L < .75) level = 'A'; else if (V === null || V < .7) level = 'B'; else if (U === null || U < .6) level = 'C';
+    const desc = {A: "Lettres à consolider : on commence par l'alphabet et les voyelles. Voyelles et translittération affichées par défaut.", B: "Lettres reconnues ; déchiffrage avec voyelles à travailler. Voyelles et translittération affichées par défaut.", C: "Tu déchiffres avec voyelles ; sans voyelles, c'est encore difficile. Voyelles affichées par défaut, translittération à la demande.", D: "Tu déchiffres même sans voyelles : voyelles masquées par défaut, à afficher au besoin."}[level];
+    S.placement = {level, res, at: Date.now()};
+    S.prefs.vowels = level !== 'D'; S.prefs.translit = level === 'A' || level === 'B';
+    logEvent('placement', {level}); save();
+    root.innerHTML = `<div class="card"><span class="eyebrow">Résultat</span><h2 style="margin-top:4px">Niveau ${level}</h2><p>${desc}</p>
+      <p class="small muted">Lettres : ${res.letters[0]}/${res.letters[1]} · avec voyelles : ${res.voc[0]}/${res.voc[1]} · sans voyelles : ${res.unvoc[0]}/${res.unvoc[1]}</p>
+      <div class="row"><button class="btn primary" id="cont">Continuer</button><button class="btn" id="redo">Refaire le test</button></div></div>`;
+    $('#cont', root).onclick = after; $('#redo', root).onclick = () => runPlacement(root, after);
+  };
+  step();
+}
+function blockPlacement(body, b) {
+  const lvl = S.placement && S.placement.level;
+  body.innerHTML = `<div id="pl"></div><div id="alpha"></div><div id="dec"></div>`;
+  const rest = () => {
+    const level = S.placement.level;
+    const alpha = $('#alpha', body);
+    if (level === 'A' || level === 'B') alpha.appendChild(alphabetModule(level));
+    else alpha.innerHTML = `<details class="card"><summary>Alphabet et voyelles (rappel)</summary>${alphabetTables()}</details>`;
+    const dec = $('#dec', body);
+    dec.innerHTML = `<div class="card"><h3>Déchiffrage authentique : les huit rois</h3><p class="small muted" style="margin-top:0">Dans la phrase de Rachi ci-dessous, retrouve les noms des huit rois d'Israël (Chaoul, Ich-Bochet, David, Chlomo, Re'havam, Aviya, Assa, Yehochafat). Touche un mot pour vérifier ta lecture.</p><div id="kings"></div></div>`;
+    mountReader($('#kings', dec), {pid: 'vy48', sids: ['vy2'], mode: 'guided', day: 1});
+  };
+  if (!lvl) runPlacement($('#pl', body), () => { $('#pl', body).innerHTML = `<div class="notice">Niveau ${S.placement.level} enregistré. Continue ci-dessous.</div>`; rest(); });
+  else { $('#pl', body).innerHTML = `<div class="notice small">Niveau ${lvl} (test déjà fait). <a href="#positionnement">Refaire le test</a></div>`; rest(); }
+}
+function alphabetTables() {
+  return `<div class="tabwrap"><table class="tab"><thead><tr><th>Lettre</th><th>Nom</th><th>Son</th><th>À ne pas confondre</th></tr></thead><tbody>${C.alphabet.map(a => `<tr><td class="he" style="font-size:26px">${esc(a[0])}</td><td>${esc(a[1])}</td><td>${esc(a[2])}</td><td class="he">${esc(a[3])}</td></tr>`).join('')}</tbody></table></div>
+  <p class="small"><b>Finales :</b> ${C.finals.map(f => `<span class="he" style="font-size:22px">${esc(f[0])}</span> ${esc(f[1])} (${esc(f[2])})`).join(' · ')}</p>
+  <div class="tabwrap"><table class="tab"><thead><tr><th>Voyelle</th><th>Nom</th><th>Son</th></tr></thead><tbody>${C.vowels.map(v => `<tr><td class="he" style="font-size:26px">${esc(v[0])}</td><td>${esc(v[1])}</td><td>${esc(v[2])}</td></tr>`).join('')}</tbody></table></div>`;
+}
+function alphabetModule(level) {
+  const d = document.createElement('div'); d.className = 'card';
+  d.innerHTML = `<h3>${level === 'A' ? 'Alphabet' : 'Voyelles'} : apprentissage et exercice</h3>${alphabetTables()}<div id="drill" style="margin-top:12px"></div>`;
+  const drill = $('#drill', d);
+  let streak = 0, total = 0;
+  const pool = level === 'A' ? C.alphabet.map(a => ({he: a[0], ans: a[2]})).concat(C.finals.map(f => ({he: f[0], ans: f[2] + ' (finale)'})))
+    : Object.entries(C.lex).filter(([k, e]) => e.v && e.tr && !['abbr','num'].includes(e.k) && !k.includes('@') && !k.includes('>')).slice(0, 220).map(([k, e]) => ({he: e.v, ans: e.tr}));
+  const next = () => {
+    const it = pool[Math.floor(Math.random() * pool.length)];
+    const opts = [it.ans]; while (opts.length < 4) { const x = pool[Math.floor(Math.random() * pool.length)].ans; if (!opts.includes(x)) opts.push(x); }
+    opts.sort(() => Math.random() - .5);
+    drill.innerHTML = `<span class="eyebrow">Exercice · série ${streak} bonne${streak > 1 ? 's' : ''} d'affilée (objectif 10)</span><div class="${level === 'A' ? 'big-letter' : 'flash'}">${esc(it.he)}</div>${opts.map(o => `<button class="opt" data-o="${esc(o)}">${esc(o)}</button>`).join('')}`;
+    $$('[data-o]', drill).forEach(b => b.onclick = () => { total++; if (b.dataset.o === it.ans) { streak++; b.classList.add('right'); } else { streak = 0; b.classList.add('wrong'); $$('[data-o]', drill).find(x => x.dataset.o === it.ans).classList.add('right'); } setTimeout(streak >= 10 ? () => { drill.innerHTML = `<div class="notice">10 bonnes réponses d'affilée en ${total} essais. Passe au déchiffrage ci-dessous.</div>`; logEvent('drill', {level, total}); } : next, 700); });
+  };
+  next();
+  return d;
+}
+
+/* ---------- fiches imprimables ---------- */
+function blockPrint(body, D, b) {
+  body.innerHTML = `<div class="card"><p style="margin-top:0">Ce bloc se fait <b>sans écran</b>, sur la fiche imprimée. Télécharge-la avant ${D.n === 6 || D.n === 13 || D.n === 20 || D.n === 27 ? 'Chabbat' : 'la séance'} et imprime-la.</p><button class="btn primary" id="dl">Télécharger la fiche du jour ${D.n}</button>
+  <p class="small muted">Après Chabbat, recopie ta reformulation écrite dans le bloc 1 du jour suivant.</p></div>`;
+  $('#dl', body).onclick = () => downloadFiche(D.n);
+}
+function blockMaamar(body) {
+  body.innerHTML = `<div class="card"><h3>Sicha et maamar</h3><p>${esc(C.program.sichaVsMaamar)}</p><p class="small">L'initiation facultative au maamar « באתי לגני » 5711 est prévue au jour 24. Son texte reste à intégrer : il faudra l'importer (PDF) et relire le texte reconnu.</p></div>`;
+}
+const PREBUILT = {1:1,2:1,3:1,4:1,5:1,6:1,7:1,8:1,13:1,27:1};
+async function downloadFiche(n) {
+  const name = 'fiche-jour-' + String(n).padStart(2, '0');
+  let data = null, ext = 'html';
+  if (PREBUILT[n]) { try { const r = await fetch('fiches/' + name + '.pdf'); if (r.ok) { data = await r.blob(); ext = 'pdf'; } } catch(e) {} }
+  if (!data) data = ficheHTML(n);
+  if (await saveFile(name + '.' + ext, data, ext === 'pdf' ? 'application/pdf' : 'text/html')) return;
+  const w = document.createElement('div'); w.className = 'card'; w.style.marginTop = '12px';
+  w.innerHTML = ext === 'pdf' ? `Le téléchargement direct n'est pas disponible ici. <a href="fiches/${name}.pdf" target="_blank" rel="noopener">Ouvrir la fiche PDF</a>` : `Le téléchargement direct n'est pas disponible ici.`;
+  app.appendChild(w);
+}
+async function saveFile(filename, data, mime) {
+  if (DOWNLOADS) {
+    try { await DOWNLOADS.save({filename, data}); toast('Fichier enregistré'); return true; }
+    catch(e) { if (e && e.code === 'declined') return true; }
+    return false;
+  }
+  if (window.claude) return false;  /* dans claude.ai sans capacité : pas de lien de téléchargement */
+  try {
+    const blob = data instanceof Blob ? data : new Blob([data], {type: mime + ';charset=utf-8'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename;
+    document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+    return true;
+  } catch(e) { return false; }
+}
+function ficheHTML(n) {
+  const D = C.program.days[n - 1];
+  const units = [], want = {};
+  for (const b of D.blocks) for (const it of b.items) {
+    if (it.pid) { const w = want[it.pid] = want[it.pid] || {all: false, sids: new Set()}; if (!it.sids.length) w.all = true; it.sids.forEach(x => w.sids.add(x)); }
+    else if (!units.find(x => x.id === it.tid)) { const u = unitFor(it); if (u) units.push(u); }
+  }
+  for (const [pid, w] of Object.entries(want)) { const p = P(pid); units.unshift(unitFor({pid, sids: w.all ? [] : p.sentences.map(x => x.id).filter(x => w.sids.has(x))})); }
+  const noTr = n === 27;
+  const vocab = new Map();
+  for (const u of units) for (const s of u.sentences) { const l = toks(s.he); l.forEach((t, i) => { const L = lexFor(l, i, s.id, u.lex); if (L && !vocab.has(L.key) && L.e.k !== 'name' && L.e.k !== 'num') vocab.set(L.key, L.e); }); }
+  const keys = C.keys;
+  let h = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Fiche jour ${n}</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Hebrew:wght@400;600&family=Inter:wght@400;600&display=swap">
+  <style>@page{size:A4;margin:14mm}body{font-family:Inter,Arial,sans-serif;font-size:11pt;color:#111;line-height:1.45}h1{font-size:17pt;margin:0 0 2mm}h2{font-size:12.5pt;margin:6mm 0 2mm;border-bottom:1px solid #999}
+  .he{font-family:"Noto Serif Hebrew","David",serif;direction:rtl;text-align:right}.txt{font-size:17pt;line-height:2.1;border:1px solid #bbb;padding:3mm 4mm;margin:2mm 0}.chunks{font-size:13pt;line-height:1.9}
+  .chunk{border:1px dashed #888;border-radius:2mm;padding:0 1.5mm;margin:0 .5mm}.role{font-family:Inter;font-size:7.5pt;color:#333;text-transform:uppercase;letter-spacing:.04em}
+  table{border-collapse:collapse;width:100%;font-size:9.5pt}td,th{border-bottom:1px solid #ccc;padding:1.2mm 2mm;vertical-align:top}.small{font-size:9pt;color:#444}.lines{border-bottom:1px solid #999;height:8mm}
+  .label{font-size:8pt;letter-spacing:.08em;text-transform:uppercase;color:#555;font-weight:600}.pb{page-break-before:always}.src{font-size:8.5pt;color:#333;border-left:2px solid #999;padding-left:2mm}</style></head><body>`;
+  h += `<div class="label">Lire les sichot · jour ${n} · ${esc(fmtDate(dayDate(n)))} · ${esc(hebDate(dayDate(n)))}</div><h1>${esc(D.title)}</h1><p class="small">${esc(D.focus)}</p>`;
+  for (const u of units) {
+    const m = u.meta;
+    h += `<h2>${esc(m.title)}</h2><div class="src">${esc(m.work || '')} · ${esc(m.occasion || '')} · ${esc(m.ref || '')}<br>${esc(m.lang || '')}<br>Lien : ${esc(m.link || '')}</div>`;
+    h += `<div class="label" style="margin-top:3mm">Texte de l'édition</div><div class="he txt">${u.sentences.map(s => esc(s.he)).join(' ')}</div>`;
+    if (!noTr && (u.annotated || u.generated)) h += `<div class="label">Aide ajoutée · groupes de sens et rôle</div>` + u.sentences.map(s => `<div class="he chunks">${s.chunks.map(c => `<span class="chunk">${c.role ? `<span class="role">${esc(ROLES[c.role] || c.role)}</span> ` : ''}${esc(c.he)}</span>`).join(' ')}</div>`).join('');
+  }
+  if (vocab.size) { h += `<h2>Mots et tournures (aide ajoutée)</h2><table><thead><tr><th class="he">Mot (vocalisé)</th><th>Lecture</th><th>Sens</th><th>Décomposition / à chercher</th></tr></thead><tbody>` + Array.from(vocab.entries()).slice(0, 140).map(([k, e]) => `<tr><td class="he" style="font-size:12.5pt">${esc(k.split(/[@>]/)[0])}${e.v && e.k !== 'abbr' ? ' · ' + esc(e.v) : ''}</td><td>${esc(e.tr)}</td><td>${esc(e.g)}</td><td>${esc(e.p || '')}${e.d ? ' <span class="he">' + esc(e.d) + '</span>' : ''}</td></tr>`).join('') + `</tbody></table>`; }
+  h += `<h2>Expressions-clés</h2><table><tbody>${keys.map(k => `<tr><td class="he" style="font-size:12.5pt;width:35%">${esc(k[0])}</td><td>${esc(k[2])}</td></tr>`).join('')}</tbody></table>`;
+  h += `<h2>Ma reformulation</h2><p class="label">Quelle question le Rabbi pose-t-il ?</p>${'<div class="lines"></div>'.repeat(3)}<p class="label">Étapes du raisonnement</p>${'<div class="lines"></div>'.repeat(5)}<p class="label">Conclusion</p>${'<div class="lines"></div>'.repeat(3)}`;
+  const qsAll = [];
+  for (const u of units) { const qs = u.annotated ? (C.passageQuestions[u.id] || []).filter(q => !q.sid || u.sentences.some(s => s.id === q.sid)) : (C.texts[u.id] || {}).questions || []; qs.forEach(q => qsAll.push(q)); }
+  if (qsAll.length) h += `<h2>Questions</h2>` + qsAll.map((q, i) => `<p>${i + 1}. ${esc(q.q)}<br>${q.opts.map((o, j) => '☐ ' + esc(o)).join('&nbsp;&nbsp; ')}</p>`).join('');
+  h += `<div class="pb"></div><div class="label">À lire après avoir écrit ta reformulation</div><h2>Traduction proposée (pas dans l'édition) et corrigé</h2>`;
+  for (const u of units) { if (!noTr) h += u.sentences.filter(s => s.fr).map(s => `<p>${esc(s.fr)}</p>${s.note ? `<p class="small">Aide : ${esc(s.note)}</p>` : ''}`).join(''); const ref = u.annotated ? C.refAnswers[u.id] : (C.texts[u.id] || {}).ref_answer; if (ref) h += `<p><b>Question :</b> ${esc(ref.question)}</p><p><b>Étapes :</b> ${esc(ref.steps)}</p><p><b>Conclusion :</b> ${esc(ref.conclusion)}</p>`; }
+  if (qsAll.length) h += `<p class="small">Réponses aux questions : ${qsAll.map((q, i) => (i + 1) + ') ' + esc(q.opts[q.a])).join(' · ')}</p>`;
+  h += `</body></html>`;
+  return h;
+}
+
+/* ---------- import ---------- */
+function viewImport() {
+  const list = S.imports.map(im => `<div class="row" style="justify-content:space-between;border-top:1px solid var(--line);padding:8px 0"><div><b>${esc(im.title)}</b><div class="small muted">${esc(im.source || '')} · ${im.status === 'validated' ? 'texte relu et validé' : 'brouillon à relire'}</div></div><div class="row"><button class="btn sm" data-edit="${esc(im.id)}">Relire / corriger</button>${im.status === 'validated' ? `<button class="btn primary sm" data-read="${esc(im.id)}">Lire</button>` : ''}</div></div>`).join('');
+  app.innerHTML = `<h1>Importer un passage</h1><p class="muted">Colle un texte ou importe un PDF (par exemple un document lié depuis Mafteiach). Le texte reconnu t'est toujours montré pour correction : il n'entre dans un exercice qu'après ta validation.</p>
+  <div class="grid2"><div class="card"><h3>Coller un passage</h3><input type="text" id="ptitle" placeholder="Titre (ex. Likoutei Sichot vol. 35, Vayichla'h 2)"><input type="text" id="psrc" placeholder="Référence et lien (page, §, URL)" style="margin-top:6px"><textarea id="ptext" class="he" style="font-size:19px;margin-top:6px;min-height:140px" placeholder="הדבק כאן את הטקסט"></textarea><button class="btn primary" id="padd" style="margin-top:8px">Continuer vers la relecture</button></div>
+  <div class="card"><h3>Importer un PDF</h3><p class="small muted" style="margin-top:0">Si le PDF contient du texte, il est extrait (y compris les anciennes polices hébraïques de Torat Menachem). Si c'est un scan${SAMPLE ? ', Claude peut faire la reconnaissance page par page' : ''}.</p><input type="file" id="pdf" accept="application/pdf"><div id="pdfst" class="small" style="margin-top:6px"></div></div></div>
+  <div id="editor"></div>
+  <h2>Mes passages importés</h2><div class="card">${list || '<span class="muted">Aucun pour l\'instant.</span>'}</div>`;
+  $('#padd').onclick = () => { const text = $('#ptext').value.trim(); if (!text) return toast('Colle un texte d\'abord'); const im = {id: 'imp' + Date.now().toString(36), title: $('#ptitle').value.trim() || 'Passage collé', source: $('#psrc').value.trim(), text, status: 'draft', origin: 'collé', _dirty: true}; S.imports.push(im); save(); editImport(im); };
+  $('#pdf').onchange = e => { const f = e.target.files[0]; if (f) importPDF(f); };
+  $$('[data-edit]').forEach(b => b.onclick = () => editImport(S.imports.find(x => x.id === b.dataset.edit)));
+  $$('[data-read]').forEach(b => b.onclick = () => readImport(b.dataset.read));
+}
+function editImport(im, pages) {
+  const ed = $('#editor');
+  ed.innerHTML = `<div class="card" style="margin-top:14px"><h3>Relecture avant usage : ${esc(im.title)}</h3><p class="small muted" style="margin-top:0">Compare avec le document et corrige les erreurs de reconnaissance (lettres confondues, mots inversés, notes mêlées au texte). Rien n'est utilisé dans un exercice avant ta validation.</p>
+  <div class="grid2"><div>${pages ? `<div class="canvaswrap" id="pv"></div>` : '<p class="small muted">Texte collé : compare avec ta source.</p>'}</div>
+  <div><input type="text" id="etitle" value="${esc(im.title)}"><input type="text" id="esrc" value="${esc(im.source || '')}" placeholder="Référence, page, lien" style="margin-top:6px"><textarea id="etext" class="he" style="font-size:19px;min-height:320px;margin-top:6px">${esc(im.text)}</textarea>
+  <div class="row" style="margin-top:6px"><button class="btn sm" id="rev">Inverser l'ordre des mots de chaque ligne</button><button class="btn sm" id="strip">Retirer les chiffres d'appels de notes</button></div></div></div>
+  <div class="row" style="margin-top:10px"><button class="btn" id="esave">Enregistrer le brouillon</button><button class="btn primary" id="evalid">J'ai relu : valider ce texte</button></div></div>`;
+  if (pages) { const pv = $('#pv'); pages.forEach(c => pv.appendChild(c)); }
+  const read = () => { im.title = $('#etitle').value.trim() || im.title; im.source = $('#esrc').value.trim(); im.text = $('#etext').value.trim(); im._dirty = true; };
+  $('#rev').onclick = () => { $('#etext').value = $('#etext').value.split('\n').map(l => l.split(/\s+/).reverse().join(' ')).join('\n'); };
+  $('#strip').onclick = () => { $('#etext').value = $('#etext').value.replace(/(?<=[א-ת"'])\d{1,3}/g, '').replace(/\s\d{1,3}\s/g, ' '); };
+  $('#esave').onclick = () => { read(); save(); toast('Brouillon enregistré'); viewImport(); };
+  $('#evalid').onclick = () => { read(); im.status = 'validated'; im.validatedAt = Date.now(); im.work = im.source; im.ref = ''; im.lang = 'Texte importé et relu par toi (' + (im.origin || '') + ').'; im.verify = 'Relu et validé par toi le ' + new Date().toLocaleDateString('fr-FR') + '.'; save(); buildOcc(); toast('Texte validé'); viewImport(); };
+  ed.scrollIntoView({behavior: 'smooth'});
+}
+function readImport(id) {
+  const im = S.imports.find(x => x.id === id);
+  C.texts[id] = Object.assign({parasha: 'Passage importé', work: im.source, ref: '', lang: im.lang, verify: im.verify}, im);
+  app.innerHTML = `<p class="eyebrow" style="margin-top:20px"><a href="#importer">← Import</a></p><div id="r"></div>`;
+  mountReader($('#r'), {tid: id, mode: S.prefs.mode === 'auto' ? 'auto' : 'guided', synthesis: true, day: 0});
+}
+function loadScript(src) { return new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s); }); }
+function legacyDecode(str) {
+  // anciennes polices hébraïques (Torat Menachem) : octets ISO-8859-8 lus en Latin-1 ou MacRoman, ordre visuel
+  const mac = '‡·‚„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙıˆ˜¯˘˙';
+  let out = ''; let heb = 0;
+  for (const ch of str) {
+    const c = ch.codePointAt(0);
+    if (c >= 0xE0 && c <= 0xFA) { out += String.fromCodePoint(0x5D0 + c - 0xE0); heb++; }
+    else { const k = mac.indexOf(ch); if (k >= 0) { out += String.fromCodePoint(0x5D0 + k); heb++; } else out += ch === 'Z' ? '–' : ch; }
+  }
+  return {out, heb};
+}
+async function importPDF(file) {
+  const st = $('#pdfst');
+  st.textContent = 'Chargement du lecteur PDF…';
+  try {
+    if (!window.pdfjsLib) { await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js'); await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'); }
+    const pdf = await pdfjsLib.getDocument({data: await file.arrayBuffer()}).promise;
+    const max = Math.min(pdf.numPages, 8);
+    let text = ''; const canvases = []; let hebUnicode = 0, legacy = 0;
+    for (let p = 1; p <= max; p++) {
+      st.textContent = `Lecture de la page ${p}/${max}…`;
+      const page = await pdf.getPage(p);
+      const vp = page.getViewport({scale: 1.6}); const cv = document.createElement('canvas'); cv.width = vp.width; cv.height = vp.height;
+      await page.render({canvasContext: cv.getContext('2d'), viewport: vp}).promise; canvases.push(cv);
+      const tc = await page.getTextContent();
+      const lines = {};
+      for (const it of tc.items) { const y = Math.round(it.transform[5] / 3); (lines[y] = lines[y] || []).push(it); }
+      const ys = Object.keys(lines).map(Number).sort((a, b) => b - a);
+      for (const y of ys) {
+        const items = lines[y].sort((a, b) => a.transform[4] - b.transform[4]);
+        let line = items.map(i => i.str).join(' ').replace(/\s+/g, ' ').trim();
+        const hebN = (line.match(/[א-ת]/g) || []).length;
+        if (hebN) { hebUnicode += hebN; line = items.slice().reverse().map(i => i.str).join(' '); if (items.some(i => i.dir === 'rtl')) line = items.slice().sort((a, b) => b.transform[4] - a.transform[4]).map(i => i.str).join(' '); }
+        else { const d = legacyDecode(line); if (d.heb > 2) { legacy += d.heb; line = d.out.split(' ').map(w => /[א-ת]/.test(w) ? [...w].reverse().join('') : w).reverse().join(' ').replace(/[()[\]]/g, c => ({'(': ')', ')': '(', '[': ']', ']': '['}[c])); } }
+        if (line) text += line + '\n';
+      }
+      text += '\n';
+    }
+    const im = {id: 'imp' + Date.now().toString(36), title: file.name.replace(/\.pdf$/i, ''), source: file.name, text: text.trim(), status: 'draft', origin: 'PDF' + (legacy ? ' (ancienne police décodée)' : ''), _dirty: true};
+    if ((hebUnicode + legacy) < 30) {
+      st.innerHTML = `Ce PDF ne contient pas de texte exploitable (scan). ${SAMPLE ? '<button class="btn sm" id="ocr">Reconnaître le texte avec Claude</button>' : 'Colle le texte manuellement ou utilise un PDF avec texte.'}`;
+      im.text = '';
+      if ($('#ocr')) $('#ocr').onclick = () => ocrPages(canvases, im, st);
+      S.imports.push(im); save(); editImport(im, canvases); return;
+    }
+    st.textContent = `Texte extrait de ${max} page${max > 1 ? 's' : ''}${pdf.numPages > max ? ' (sur ' + pdf.numPages + ')' : ''}. Relis-le ci-dessous.`;
+    S.imports.push(im); save(); editImport(im, canvases);
+  } catch(e) { st.textContent = 'Impossible de lire ce PDF : ' + (e && e.message ? e.message : 'le lecteur PDF n\'a pas pu se charger'); }
+}
+async function ocrPages(canvases, im, st) {
+  let all = '';
+  for (let i = 0; i < canvases.length; i++) {
+    st.textContent = `Reconnaissance par Claude, page ${i + 1}/${canvases.length}…`;
+    const blob = await new Promise(r => canvases[i].toBlob(r, 'image/png'));
+    try {
+      const r = await SAMPLE(`Cette image est une page d'un livre hébreu (sicha du Rabbi de Loubavitch), souvent en deux colonnes qui se lisent de droite à gauche (colonne de droite d'abord). Transcris EXACTEMENT le texte principal en hébreu, sans les notes de bas de page, sans corriger ni compléter, sans traduire. Remplace les guillemets typographiques par ". Si un mot est illisible, écris [?]. Réponds uniquement avec le texte transcrit.`, {images: [blob], modelTier: 'default'});
+      all += r.text.trim() + '\n\n';
+    } catch(e) { st.textContent = sampleErr(e); break; }
+  }
+  im.text = all.trim(); im.origin = 'PDF scanné (reconnaissance par Claude, à relire)'; im._dirty = true; save();
+  st.textContent = 'Reconnaissance terminée : relis attentivement le texte avant de le valider.';
+  editImport(im, canvases);
+}
+
+/* ---------- progrès et ajustements ---------- */
+function viewProgress() {
+  const daysDone = Object.keys(S.days).filter(n => dayDone(+n)).length;
+  const cards = Object.keys(S.srs).length, mastered = Object.values(S.srs).filter(c => c.box >= 4).length;
+  const tests = Object.entries(S.tests).filter(([k, t]) => t.start).sort();
+  const rows = tests.map(([k, t]) => { const sec = t.sec || (t.end ? Math.floor((t.end - t.start) / 1000) : null); const fb = t.feedback && t.feedback.score; const fs = fb ? ((fb.question || 0) + (fb.etapes || 0) + (fb.conclusion || 0)) : null; const per100 = t.wordCount ? Math.round((t.aids || 0) * 100 / t.wordCount) : null;
+    return `<tr><td>${esc(k.replace('j', 'Jour '))}</td><td>${esc(t.id)}</td><td>${sec != null ? Math.round(sec / 60) + ' min' : '—'}</td><td>${t.aids || 0}${per100 != null ? ' (' + per100 + ' / 100 mots)' : ''}</td><td>${t.qscore != null ? Math.round(t.qscore * 100) + ' %' : '—'}</td><td>${fs != null ? fs + '/6' : '—'}</td></tr>`; }).join('');
+  const recs = recommendations(tests);
+  const err = Object.entries(S.errors).sort((a, b) => b[1] - a[1]);
+  app.innerHTML = `<h1>Progrès</h1>
+  <div class="kpi"><div class="card"><div class="eyebrow">Niveau initial</div><div class="v">${S.placement ? S.placement.level : '—'}</div></div><div class="card"><div class="eyebrow">Jours terminés</div><div class="v">${daysDone} / 28</div></div><div class="card"><div class="eyebrow">Cartes en révision</div><div class="v">${cards}</div><div class="small muted">${mastered} bien acquises</div></div><div class="card"><div class="eyebrow">Phrases lues</div><div class="v">${Object.keys(S.reads).length}</div></div></div>
+  <h2>Bilans hebdomadaires et examen final</h2><div class="tabwrap card"><table class="tab"><thead><tr><th>Bilan</th><th>Texte</th><th>Temps de lecture</th><th>Aides utilisées</th><th>Questions</th><th>Reformulation</th></tr></thead><tbody>${rows || '<tr><td colspan="6" class="muted">Aucun bilan encore (le premier est au jour 7).</td></tr>'}</tbody></table></div>
+  <h2>Ajustements pour les séances suivantes</h2><div class="card stack">${recs.map(r => `<div>• ${esc(r)}</div>`).join('') || '<span class="muted">Les recommandations apparaissent après le premier bilan.</span>'}</div>
+  <h2>Types d'erreurs aux questions</h2><div class="card">${err.length ? err.map(([k, v]) => `<span class="chip" style="margin:3px">${esc(k)} : ${v}</span>`).join('') : '<span class="muted">Pas encore d\'erreurs enregistrées.</span>'}</div>
+  <h2>Données</h2><div class="card small">${DB ? 'Ta progression est enregistrée dans ton espace privé de cette page (visible par toi seul) et sur cet appareil.' : 'Ta progression est enregistrée dans ce navigateur, sur cet appareil. Pour passer de l\'ordinateur à l\'iPad : « Exporter ma progression » sur l\'un, puis « Importer une progression » sur l\'autre.'}
+  <div class="row" style="margin-top:8px"><button class="btn sm" id="exp">Exporter ma progression (JSON)</button><label class="btn sm">Importer une progression<input type="file" id="impjson" accept="application/json,.json" hidden></label><button class="btn sm" id="reset">Recommencer à zéro</button><span id="cf"></span></div></div>`;
+  $('#exp').onclick = async () => { if (!(await saveFile('progression-sichot.json', JSON.stringify(S, null, 1), 'application/json'))) toast('Téléchargement indisponible ici'); };
+  $('#impjson').onchange = async e => { const f = e.target.files[0]; if (!f) return; try { const x = JSON.parse(await f.text()); if (!x || x.v !== 1 || !x.prefs) throw 0; S = Object.assign(blankState(), x); (S.imports || []).forEach(im => im._dirty = true); Object.values(S.ann || {}).forEach(a => a._dirty = true); save(); flush(); toast('Progression importée'); render(); } catch(err) { toast('Ce fichier n\'est pas une progression valide'); } };
+  $('#reset').onclick = () => { $('#cf').innerHTML = '<button class="btn sm" id="really" style="color:var(--bad)">Confirmer : tout effacer</button>'; $('#really').onclick = () => { S = blankState(); save(); flush(); render(); }; };
+}
+function recommendations(tests) {
+  const out = [];
+  if (!tests.length) return out;
+  const [k, t] = tests[tests.length - 1];
+  const fb = t.feedback && t.feedback.score; const fs = fb ? ((fb.question || 0) + (fb.etapes || 0) + (fb.conclusion || 0)) / 6 : null;
+  const comp = fs != null ? fs : t.qscore;
+  const per100 = t.wordCount ? (t.aids || 0) * 100 / t.wordCount : null;
+  if (comp != null && comp < .5) out.push("Compréhension en dessous de 50 % au dernier bilan : reste en Lecture guidée cette semaine, avec les voyelles affichées, et refais la lecture guidée du passage du bilan au bloc 1 du jour suivant.");
+  else if (comp != null && comp < .75) out.push("Compréhension partielle : garde les groupes de sens avant la traduction, et écris toujours ta reformulation avant d'ouvrir la traduction.");
+  else if (comp != null) out.push("Bonne compréhension : essaie le mode Lecture autonome pour le bloc 3 des prochains jours.");
+  if (per100 != null && per100 > 25) out.push(`Beaucoup de mots consultés (${Math.round(per100)} pour 100 mots) : ajoute 10 minutes de révision des cartes au début de chaque bloc 1.`);
+  if (t.sec && t.wordCount && t.sec / t.wordCount > 6) out.push("Lecture encore lente : relis chaque jour à voix haute deux phrases déjà étudiées, sans aide, en chronométrant.");
+  const err = Object.entries(S.errors).sort((a, b) => b[1] - a[1])[0];
+  if (err) out.push({connecteur: "Tes erreurs portent surtout sur les connecteurs : révise le tableau des expressions-clés avant chaque lecture.", abreviation: "Tes erreurs portent surtout sur les abréviations : révise la liste des abréviations (onglet Révision).", structure: "Tes erreurs portent sur la structure : en lecture guidée, active les groupes de sens et nomme le rôle de chaque groupe avant de lire la traduction.", sens: "Tes erreurs portent sur le sens : consulte la décomposition des mots (préfixes, forme à chercher) plutôt que la traduction."}[err[0]] || '');
+  if (k === 'j28' && comp != null && comp < .6) out.push("La sicha complète reste difficile en autonomie : ton niveau d'autonomie mesuré est indiqué dans le tableau (temps, aides pour 100 mots, score). Refais l'exercice sur un texte plus court (le §ד de Roch Hachana ou Vayigach 5711) pour mesurer précisément ce que tu sais faire seul.");
+  return out.filter(Boolean);
+}
+
+/* ---------- aide / méthode ---------- */
+function viewHelp() {
+  app.innerHTML = `<h1>Méthode</h1>
+  <div class="grid2"><div class="edition"><div class="zone-label">Texte de l'édition</div><p class="small" style="margin:0">Le texte tel qu'il figure dans le document, vérifié sur la page. Seuls les guillemets sont normalisés et les appels de notes retirés.</p></div>
+  <div class="aid"><div class="zone-label">Aide ajoutée</div><p class="small" style="margin:0">Tout ce que j'ajoute : voyelles, translittération, sens des mots, découpage, rôles, notes. Ce n'est pas dans l'édition.</p></div>
+  <div class="trans"><div class="zone-label">Traduction proposée</div><p class="small" style="margin:0">Ma traduction française. Masquée par défaut ; elle s'ouvre après ta reformulation.</p></div></div>
+  <h2>Les cinq étapes de lecture</h2><ol><li>Lis l'extrait. Si besoin, affiche les voyelles ou la translittération (aides ajoutées).</li><li>Touche un mot : sens dans cette phrase, préfixes et suffixes, forme à chercher au dictionnaire.</li><li>« Groupes de sens » : la phrase découpée, avec le rôle de chaque groupe dans le raisonnement.</li><li>Écris ce que tu as compris, puis ouvre la traduction.</li><li>« Revoir ailleurs » et la révision espacée : les mots qui t'ont bloqué, dans d'autres phrases.</li></ol>
+  <h2>Deux modes</h2><p><b>Lecture guidée</b> : toutes les aides, débloquées une par une. <b>Lecture autonome</b> : le dictionnaire (toucher un mot) reste accessible ; pas de voyelles ni de découpage ; la traduction s'affiche après ta réponse. Les bilans et l'examen final sont toujours en mode autonome.</p>
+  <h2>Translittération</h2><p class="small">Prononciation israélienne simplifiée : <b>kh</b> = ח ou כ sans point, <b>ch</b> = ש, <b>ts</b> = צ, l'apostrophe marque un ע ou un א prononcé. Dans les communautés 'Habad, on entend souvent la prononciation ashkénaze (Ya'akoïv, Toïre…).</p>
+  <h2>Dictionnaires</h2><p class="small">Chaque mot propose trois liens : Pealim (conjugaisons), Morfix (hébreu-anglais) et Milog (hébreu-hébreu). Cherche la « forme à chercher » indiquée dans la carte du mot, pas la forme avec préfixes.</p>
+  <h2>Sources</h2><p class="small">Le parcours part de l'index de Mafteiach (année 5711) et des documents qu'il lie. Le texte de la semaine 1 (Sefer HaSichot 5748, p. 151-154) a été transcrit et relu sur les images du PDF ; les textes de Torat Menachem proviennent de la couche texte des PDF (ancienne police hébraïque décodée). Chaque texte affiche sa fiche « Source et vérification ».</p>
+  <h2>Abréviations fréquentes</h2><div class="tabwrap"><table class="tab"><tbody>${C.keys.filter(k => k[3] === 'abreviation' || k[1]).map(k => `<tr><td class="he" style="font-size:20px">${esc(k[0])}</td><td class="he">${esc(k[1])}</td><td>${esc(k[2])}</td></tr>`).join('')}</tbody></table></div>`;
+}
+
+/* ---------- démarrage ---------- */
+(async function boot() {
+  try {
+    const r = await fetch('content.json');
+    C = await r.json();
+  } catch(e) { app.innerHTML = '<div class="card" style="margin-top:20px">Le contenu n\'a pas pu être chargé. Recharge la page.</div>'; return; }
+  await Promise.all([loadState(), initCaps()]);
+  seedKeys();
+  for (const im of S.imports) if (im.status === 'validated') C.texts[im.id] = Object.assign({parasha: 'Passage importé', work: im.source, ref: ''}, im);
+  buildOcc();
+  window.__C = C; window.__ficheHTML = ficheHTML; window.__S = () => S;
+  render();
+})();
+})();
+</script>
+
+</body>
+</html>
